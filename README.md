@@ -1,73 +1,115 @@
-# React + TypeScript + Vite
+<p align="middle" >
+  <img width="400px;" src="./src/assets/dobby_is_free.jpeg">
+</p>
+<h1 align="middle">무엇이든 만들어보세요!</h1>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 🔍 미션 개요
 
-Currently, two official plugins are available:
+프론트엔드 애플리케이션을 구현하며, 외부 공개 API를 활용해 실제 데이터 기반의 간단한 서비스를 만든다. **API는 자유롭게 선택할 수 있으며, 본인이 만들고 싶은 간단한 서비스를 직접 기획하고 구현하면 된다.** 어떤 주제든 상관없다.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+자유롭게 만들되, 아래 목표들은 반드시 달성해야 한다:
 
-## React Compiler
+- TypeScript를 사용한다.
+- React Router를 활용한 다중 페이지 애플리케이션 구성
+- 사용자 경험 및 웹 접근성 개선
+- 테스트 코드 작성과 커버리지 향상
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🌐 API 사용 규칙
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- 아래 저장소에 등록된 공개 API 중 **하나를 선택**하여 사용한다.
+  - [공개 API 저장소](https://github.com/yybmion/public-apis-4Kr)
+  - [TMDB](https://developer.themoviedb.org/reference/getting-started)
+- 서버는 직접 구현하지 않는다.
+- 모든 기능은 **순수 프론트엔드 환경**에서 동작해야 한다.
+- API 호출 과정에서 발생하는 로딩 및 오류 상태를 고려한다.
+- 공개되지 않아야 할 key는 환경변수 파일에 담는다.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 📋 미션 필수 요구사항
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### [STEP1] 페이지 구성 및 라우팅
+
+#### 목표
+
+React Router를 활용해 다중 페이지 구조를 이해하고, 기본적인 서비스 흐름을 구성한다.
+
+#### 요구사항
+
+1. React Router를 사용해 **2개 이상의 페이지 뷰**를 구현한다.
+2. 모든 페이지에 공통으로 노출되며, 각 페이지로 이동할 수 있는 **네비게이션 바**를 구현한다.
+3. 각 페이지는 명확히 구분되는 역할을 가진다.
+4. API를 활용해 데이터를 조회하고 화면에 렌더링한다.
+5. 페이지 전환 시 전체 페이지 새로고침이 발생하지 않아야 한다.
+
+#### 제한사항
+
+- 라우팅 구조는 명확하게 드러나도록 구성한다.
+- [react-router](https://reactrouter.com/) 라이브러리를 사용한다.
+
+```bash
+npm install react-router
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### [STEP2] 사용자 경험 및 웹 접근성 개선
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+#### 목표
+
+기존에 구현한 기능을 개선하며, **모든** 사용자가 불편함 없이 서비스를 이용할 수 있도록 한다.
+
+#### 요구사항
+
+1. API 요청 실패 시 사용자에게 오류 상태를 명확히 전달한다.
+2. 시맨틱 HTML 요소가 적절히 사용되어 있어야 한다.
+3. 웹 접근성을 고려한 속성(aria-label 등)을 필요한 위치에 적용한다.
+
+#### 참고 사항
+
+- 디자인 완성도보다는 **사용 흐름의 명확성**과 **접근성 고려 여부**에 집중한다.
+- 1주차에 작성한 구조를 무리하게 변경하지 않아도 된다.
+
+---
+
+### [STEP3] 테스트 코드 작성 및 커버리지 향상
+
+#### 목표
+
+이미 작성된 기능을 대상으로 테스트 코드를 추가하며, 코드의 신뢰도를 높인다.
+
+#### 테스트 환경
+
+- 테스팅 라이브러리는 Vitest, Jest 등 자유롭게 선택한다.
+- 선택한 이유와 본인의 생각을 제출하는 PR에 기술한다.
+
+#### 요구사항
+
+1. 기존에 구현한 주요 기능에 대한 테스트 코드를 작성한다.
+2. 사용자 관점에서 동작을 검증하는 테스트를 우선한다.
+3. 무엇을 테스트할 것인지 고민하고, 그 내용을 PR에 기술한다.
+4. 테스트를 위해 불필요한 로직 변경은 지양한다.
+5. `npm run test` 를 통해 테스트를 실행할 수 있어야 한다.
+
+#### 주의사항
+
+- 테스트를 작성하기 어렵다면, 해당 코드 구조가 테스트하기 어려운 이유를 먼저 고민한다.
+- 단순한 커버리지 채우기를 위한 의미 없는 테스트는 지양한다.
+
+---
+
+## 🧪 테스트 전략 가이드
+
+- 컴포넌트 단위 테스트를 기본으로 한다.
+- 사용자 인터랙션(클릭, 입력 등)을 중심으로 테스트한다.
+- 외부 API 호출은 테스트 환경에서 제어 가능하도록 구성한다.
+
+---
+
+## ⚠️ 미션 진행 시 유의사항
+
+- 모든 요구사항은 순차적으로 누적된다.
+- 이전 주차 요구사항을 삭제하거나 무력화하지 않는다.
+- 기능 구현보다 **의도와 구조를 설명할 수 있는 코드**를 작성한다.
