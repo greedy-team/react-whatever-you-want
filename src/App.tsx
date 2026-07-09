@@ -2,6 +2,7 @@ import {createBrowserRouter, RouterProvider, Outlet} from "react-router-dom";
 import Header from "./components/Header/Header";
 import MainPage from "./pages/MainPage/MainPage";
 import ResultPage from "./pages/ResultPage/ResultPage";
+import HistoryPage from "./pages/HistoryPage/HistoryPage";
 
 function Layout() {
   return (
@@ -22,6 +23,9 @@ const router =createBrowserRouter([
       },
       {
         path:"result/random",element:<ResultPage/>,
+      },
+      {
+        path:"history", element:<HistoryPage/>
       },
   ],
 },
