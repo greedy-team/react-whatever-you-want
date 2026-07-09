@@ -39,7 +39,7 @@ export function ListScreen() {
       setError(null);
 
       const params = new URLSearchParams({
-        rowSize: "10",
+        rowSize: "100",
       });
 
       try {

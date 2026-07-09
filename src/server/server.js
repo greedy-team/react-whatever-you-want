@@ -8,7 +8,7 @@ const app = express();
 app.use(cors());
 
 app.get("/api/missing-persons", async (req, res) => {
-  const { rowSize, sexdstnDscd, age, page } = req.query;
+  const { rowSize, sexdstnDscd, age, page="1" } = req.query;
 
   const body = new URLSearchParams();
   body.append("esntlId", process.env.SAFE182_ESNTL_ID);
