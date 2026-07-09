@@ -44,9 +44,15 @@ export default function ResultPage(){
     const genre =searchParams.get("genre");
     const era=searchParams.get("era");
 
-    const {isPending,error,data}=useQuery({
+    const {isPending,error,data:randomMovie}=useQuery({
         queryKey:["movieRandomDrop",genre,era],
         queryFn: () => fetchMovieData(genre, era),
+
+        select: (rawData)=>{
+            if (!rawData?.results || rawData.results.length === 0) return null;
+            const randomIndex = Math.floor(Math.random() * rawData.results.length);
+            return rawData.results[randomIndex];
+        }
     });
 
     if (isPending){
@@ -66,7 +72,7 @@ export default function ResultPage(){
         );
     }
 
-    const movieTitle = data?.results?.[0]?.title || `TMDB 연결 통로 개통 성공`;
+    const movieTitle = randomMovie?.title || `선택하신 조건에 맞는 추천 영화가 없습니다.`;
 
     return (
         <main>
