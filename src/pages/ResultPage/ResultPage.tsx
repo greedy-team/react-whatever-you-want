@@ -1,4 +1,41 @@
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
+
+const fetchMovieData=async(genre: string | null, era: string | null) => {
+    const API_KEY="022081e1c47971a54a222e3eacfa4020";
+    
+    const genreMap: Record<string, number> = {
+        action: 28,
+        comedy: 35,
+        drama: 18,
+        romance: 10749,
+        thriller: 53,
+        mystery: 9648,
+        horror: 27,
+        animation: 16,
+        sf: 878
+    };
+    
+    const eraMap: Record<string, string> = {
+        "2020s": "2024",
+        "2010s": "2015",
+        "2000s": "2005",
+        "1990s": "1995",
+        "1980s": "1985"
+    };
+    
+    const tmdbGenreId = genre ? genreMap[genre.toLowerCase()] : "";
+    const tmdbYear = era ? eraMap[era] : "";
+
+    const url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_genres=${tmdbGenreId}&primary_release_year=${tmdbYear}&language=ko-KR`;
+
+    const response =await fetch(url);
+
+    if(!response.ok){
+        throw new Error("데이터를 가져오는데 실패했습니다.");
+    }
+    return response.json();
+}
 
 export default function ResultPage(){
     const navigate=useNavigate();
@@ -7,6 +44,30 @@ export default function ResultPage(){
     const genre =searchParams.get("genre");
     const era=searchParams.get("era");
 
+    const {isPending,error,data}=useQuery({
+        queryKey:["movieRandomDrop",genre,era],
+        queryFn: () => fetchMovieData(genre, era),
+    });
+
+    if (isPending){
+        return(
+            <main>
+                <h2>취향을 기반으로 영화 탐색 중...</h2>
+            </main>
+        );
+    }
+
+    if (error){
+        return(
+            <main>
+                <h2>에러가 발생했습니다.</h2>
+                <button onClick={() => navigate("/")}>홈으로 돌아가기</button>
+            </main>
+        );
+    }
+
+    const movieTitle = data?.results?.[0]?.title || `TMDB 연결 통로 개통 성공`;
+
     return (
         <main>
             <h2>FlixDrop 드롭 결과</h2>
@@ -14,6 +75,7 @@ export default function ResultPage(){
                 <h3>주소창에서 읽어온 데이터</h3>
                 <p>드롭된 장르 코드: {genre}</p>
                 <p>드롭된 시대 코드: {era}</p>
+                <p>결과: {movieTitle}</p>
             </div>
 
             <button onClick={()=>navigate("/")}>필터 다시 고르기</button>
