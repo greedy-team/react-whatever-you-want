@@ -1,0 +1,1 @@
+export default function Header() {return <header><h1>FlixDrop</h1></header>;}
