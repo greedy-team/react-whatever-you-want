@@ -1,8 +1,198 @@
+import { useRef, useState } from "react";
+
+interface MissingPerson {
+  rnum: number;
+  occrde: string;
+  alldressingDscd: string | null;
+  ageNow: string;
+  age: number;
+  writngTrgetDscd: string;
+  sexdstnDscd: string;
+  etcSpfeatr: string;
+  occrAdres: string;
+  nm: string;
+  msspsnIdntfccd: number;
+  tknphotoFile: string;
+}
+
 export function SearchScreen() {
+  const genderRef = useRef<HTMLSelectElement>(null);
+  const ageRef = useRef<HTMLSelectElement>(null);
+  const locationRef = useRef<HTMLInputElement>(null);
+
+  const [results, setResults] = useState<MissingPerson[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [page, setPage] = useState(1);
+  const [searched, setSearched] = useState(false); // 검색 실행 여부
+
+  // 검색 조건을 기억해뒀다가 다음 페이지 요청할 때도 재사용
+  const lastParamsRef = useRef<{ gender?: string; age?: string }>({});
+
+  async function fetchResults(targetPage: number, prevIndex: number) {
+    const { gender, age } = lastParamsRef.current;
+
+    const params = new URLSearchParams({
+      rowSize: "10",
+      page: String(targetPage),
+    });
+    if (gender && gender !== "none") params.append("sexdstnDscd", gender);
+
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `http://localhost:4000/api/missing-persons?${params}`,
+      );
+      const data = await res.json();
+
+      if (data.result === "00") {
+        let filtered = data.list;
+
+        if (age && age !== "none") {
+          const start = Number(age);
+          const end = age === "80" ? 999 : start + 9;
+          filtered = filtered.filter((person: MissingPerson) => {
+            const currentAge = Number(person.ageNow);
+            return currentAge >= start && currentAge <= end;
+          });
+        }
+
+        setResults(filtered);
+        if (prevIndex) {
+          setCurrentIndex(filtered.length - 1);
+        } else {
+          setCurrentIndex(0);
+        }
+        setPage(targetPage);
+      } else {
+        console.error("API 에러:", data.msg);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function handleSearch() {
+    lastParamsRef.current = {
+      gender: genderRef.current?.value,
+      age: ageRef.current?.value,
+    };
+    setSearched(true);
+    fetchResults(1,0); // 검색은 항상 1페이지부터
+  }
+
+  function handlePrev() {
+    if (currentIndex > 0) {
+      setCurrentIndex((prev) => prev - 1);
+    } else if (currentIndex === 0 && page > 1) {
+      // 이전 페이지로 이동
+      fetchResults(page - 1,1);
+    }
+  }
+
+  function handleNext() {
+    if (currentIndex < results.length - 1) {
+      // 아직 현재 페이지 안에 더 볼 사람이 있음
+      setCurrentIndex((prev) => prev + 1);
+    } else {
+      // 마지막 사람이었음 -> 다음 페이지 불러오기
+      fetchResults(page + 1,0);
+    }
+  }
+
+  function getTargetLabel(code: string) {
+    const map: Record<string, string> = {
+      "010": "정상아동(18세미만)",
+      "020": "가출인",
+      "040": "시설보호무연고자",
+      "060": "지적장애인",
+      "061": "지적장애인(18세미만)",
+      "062": "지적장애인(18세이상)",
+      "070": "치매질환자",
+      "080": "불상(기타)",
+    };
+    return map[code] || code;
+  }
+
+  const current = results[currentIndex];
+
   return (
     <div>
       <h1>Search Screen</h1>
-      <p>This is the search screen of the app.</p>
+      <div>
+        <span>성별</span>
+        <select ref={genderRef}>
+          <option value="none">선택안함</option>
+          <option value="1">남자</option>
+          <option value="2">여자</option>
+        </select>
+
+        <span>나이</span>
+        <select ref={ageRef}>
+          <option value="none">선택안함</option>
+          <option value="0">10살미만</option>
+          <option value="10">10대</option>
+          <option value="20">20대</option>
+          <option value="30">30대</option>
+          <option value="40">40대</option>
+          <option value="50">50대</option>
+          <option value="60">60대</option>
+          <option value="70">70대</option>
+          <option value="80">80대이상</option>
+        </select>
+
+        <span>장소</span>
+        <input type="text" ref={locationRef} />
+      </div>
+      <button onClick={handleSearch}>찾아보기</button>
+
+      {loading && <p>불러오는 중...</p>}
+
+      {searched && !loading && !current && <p>더 이상 결과가 없습니다.</p>}
+
+      {current && (
+        <div
+          style={{
+            border: "1px solid #ddd",
+            borderRadius: "8px",
+            padding: "16px",
+            maxWidth: "400px",
+            margin: "20px auto",
+            textAlign: "center",
+          }}
+        >
+          <button
+            onClick={handlePrev}
+            disabled={currentIndex === 0 && page === 1}
+          >
+            ▲ 이전
+          </button>
+
+          {current.tknphotoFile && (
+            <img
+              src={`data:image/jpeg;base64,${current.tknphotoFile}`}
+              alt={current.nm}
+              style={{ maxWidth: "100%", height: "auto", margin: "12px 0" }}
+            />
+          )}
+          <p>
+            <strong>{current.nm}</strong>
+          </p>
+          <p>
+            성별: {current.sexdstnDscd} / 당시나이: {current.age}세 / 현재나이:{" "}
+            {current.ageNow}세
+          </p>
+          <p>신체특징: {current.etcSpfeatr || "정보 없음"}</p>
+          <p>발생일: {current.occrde}</p>
+          <p>발생장소: {current.occrAdres}</p>
+          <p>착의사항: {current.alldressingDscd || "정보 없음"}</p>
+          <p>대상구분: {getTargetLabel(current.writngTrgetDscd)}</p>
+
+          <button onClick={handleNext}>▼ 다음</button>
+        </div>
+      )}
     </div>
   );
 }
