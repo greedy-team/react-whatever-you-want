@@ -18,7 +18,6 @@ interface MissingPerson {
 export function SearchScreen() {
   const genderRef = useRef<HTMLSelectElement>(null);
   const ageRef = useRef<HTMLSelectElement>(null);
-  const locationRef = useRef<HTMLInputElement>(null);
 
   const [results, setResults] = useState<MissingPerson[]>([]);
   const [loading, setLoading] = useState(false);
@@ -142,9 +141,6 @@ export function SearchScreen() {
           <option value="70">70대</option>
           <option value="80">80대이상</option>
         </select>
-
-        <span>장소</span>
-        <input type="text" ref={locationRef} />
       </div>
       <button onClick={handleSearch}>찾아보기</button>
 
