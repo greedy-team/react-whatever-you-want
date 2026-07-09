@@ -27,45 +27,65 @@ export function SearchScreen() {
 
   // 검색 조건을 기억해뒀다가 다음 페이지 요청할 때도 재사용
   const lastParamsRef = useRef<{ gender?: string; age?: string }>({});
-
-  async function fetchResults(targetPage: number, prevIndex: number) {
+  const MAX_ATTEMPTS = 3;
+  async function fetchResults(
+    startPage: number,
+    direction: "next" | "prev" = "next",
+  ) {
     const { gender, age } = lastParamsRef.current;
-
-    const params = new URLSearchParams({
-      rowSize: "10",
-      page: String(targetPage),
-    });
-    if (gender && gender !== "none") params.append("sexdstnDscd", gender);
-
     setLoading(true);
-    try {
-      const res = await fetch(
-        `http://localhost:4000/api/missing-persons?${params}`,
-      );
-      const data = await res.json();
 
-      if (data.result === "00") {
-        let filtered = data.list;
+    try {
+      let targetPage = startPage;
+      let attempts = 0;
+      let filtered: MissingPerson[] = [];
+      let lastSuccessPage = targetPage;
+
+      while (attempts < MAX_ATTEMPTS) {
+        const params = new URLSearchParams({
+          rowSize: "10",
+          page: String(targetPage),
+        });
+        if (gender && gender !== "none") params.append("sexdstnDscd", gender);
+
+        const res = await fetch(
+          `http://localhost:4000/api/missing-persons?${params}`,
+        );
+        const data = await res.json();
+
+        if (data.result !== "00") {
+          console.error("API 에러:", data.msg);
+          break;
+        }
+
+        let pageList = data.list;
 
         if (age && age !== "none") {
           const start = Number(age);
           const end = age === "80" ? 999 : start + 9;
-          filtered = filtered.filter((person: MissingPerson) => {
+          pageList = pageList.filter((person: MissingPerson) => {
             const currentAge = Number(person.ageNow);
             return currentAge >= start && currentAge <= end;
           });
         }
 
-        setResults(filtered);
-        if (prevIndex) {
-          setCurrentIndex(filtered.length - 1);
-        } else {
-          setCurrentIndex(0);
+        lastSuccessPage = targetPage;
+
+        if (pageList.length > 0) {
+          filtered = pageList;
+          break; // 결과 찾았으니 그만 시도
         }
-        setPage(targetPage);
-      } else {
-        console.error("API 에러:", data.msg);
+
+        // 이번 페이지는 비어있음 -> 방향에 따라 다음/이전 페이지로
+        targetPage = direction === "prev" ? targetPage - 1 : targetPage + 1;
+        attempts++;
+
+        if (targetPage < 1) break; // 1페이지 아래로는 못 감
       }
+
+      setResults(filtered);
+      setCurrentIndex(direction === "prev" ? filtered.length - 1 : 0);
+      setPage(lastSuccessPage);
     } catch (err) {
       console.error(err);
     } finally {
@@ -79,7 +99,7 @@ export function SearchScreen() {
       age: ageRef.current?.value,
     };
     setSearched(true);
-    fetchResults(1,0); // 검색은 항상 1페이지부터
+    fetchResults(1, 0); // 검색은 항상 1페이지부터
   }
 
   function handlePrev() {
@@ -87,7 +107,7 @@ export function SearchScreen() {
       setCurrentIndex((prev) => prev - 1);
     } else if (currentIndex === 0 && page > 1) {
       // 이전 페이지로 이동
-      fetchResults(page - 1,1);
+      fetchResults(page - 1, 1);
     }
   }
 
@@ -97,7 +117,7 @@ export function SearchScreen() {
       setCurrentIndex((prev) => prev + 1);
     } else {
       // 마지막 사람이었음 -> 다음 페이지 불러오기
-      fetchResults(page + 1,0);
+      fetchResults(page + 1, 0);
     }
   }
 
