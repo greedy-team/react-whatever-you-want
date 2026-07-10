@@ -55,6 +55,32 @@ export default function ResultPage(){
         }
     });
 
+    const handleSaveToHistory=()=>{
+        if (!randomMovie)return;
+
+        const existingHistory=JSON.parse(localStorage.getItem("flixdrop_history")||"[]");
+
+        const duplicateArray=existingHistory.filter((item:any)=>item.id===randomMovie.id);
+
+        if (duplicateArray.length>0){
+            alert("이미 보관함에 담긴 영화입니다!");
+            return;
+        }
+
+        const newMovieItem={
+            id:randomMovie.id,
+            title:randomMovie.title,
+            genre:genre,
+            era:era,
+        };
+
+        const updatedHistory=[newMovieItem,...existingHistory];
+
+        localStorage.setItem("flixdrop_history",JSON.stringify(updatedHistory));
+
+        alert("보관함에 성공적으로 저장되었습니다!");
+    }
+
     if (isPending){
         return(
             <main>
@@ -83,6 +109,12 @@ export default function ResultPage(){
                 <p>드롭된 시대 코드: {era}</p>
                 <p>결과: {movieTitle}</p>
             </div>
+
+            {randomMovie&&(
+                <button onClick={handleSaveToHistory}>
+                    보관함에 저장하기
+                </button>
+            )}
 
             <button onClick={()=>navigate("/")}>필터 다시 고르기</button>
         </main>
