@@ -1,0 +1,30 @@
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+}
+
+header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #ddd;
+}
+
+nav {
+  display: flex;
+  gap: 1rem;
+}
+
+/* 현재 페이지 링크 강조 */
+nav a[aria-current="page"] {
+  font-weight: bold;
+}
+
+main {
+  padding: 1.5rem;
+}
+
+.refresh {
+  margin-left: 0.5rem;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
