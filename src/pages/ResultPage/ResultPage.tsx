@@ -1,41 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
-
-const fetchMovieData=async(genre: string | null, era: string | null) => {
-    const API_KEY="022081e1c47971a54a222e3eacfa4020";
-    
-    const genreMap: Record<string, number> = {
-        action: 28,
-        comedy: 35,
-        drama: 18,
-        romance: 10749,
-        thriller: 53,
-        mystery: 9648,
-        horror: 27,
-        animation: 16,
-        sf: 878
-    };
-    
-    const eraMap: Record<string, string> = {
-        "2020s": "2024",
-        "2010s": "2015",
-        "2000s": "2005",
-        "1990s": "1995",
-        "1980s": "1985"
-    };
-    
-    const tmdbGenreId = genre ? genreMap[genre.toLowerCase()] : "";
-    const tmdbYear = era ? eraMap[era] : "";
-
-    const url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_genres=${tmdbGenreId}&primary_release_year=${tmdbYear}&language=ko-KR`;
-
-    const response =await fetch(url);
-
-    if(!response.ok){
-        throw new Error("데이터를 가져오는데 실패했습니다.");
-    }
-    return response.json();
-}
+import{fetchMovieData}from"../../apis/movie";
 
 export default function ResultPage(){
     const navigate=useNavigate();
