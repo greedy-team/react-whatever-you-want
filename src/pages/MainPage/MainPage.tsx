@@ -1,5 +1,6 @@
 import {useState}from "react";
 import { useNavigate } from "react-router-dom";
+import { UI_GENRES, UI_ERAS } from "../../constants/movieFilters";
 
 export default function MainPage() { 
 
@@ -25,8 +26,15 @@ export default function MainPage() {
             <form onSubmit={handleSubmit}>
                 <div>
                     <p><b>어떤 장르를 원하시나요?</b></p>
-                    <button type="button" onClick={()=>setGenre("action")}>액션</button>
-                    <button type="button" onClick={()=>setGenre("comedy")}>코미디</button>
+                    {UI_GENRES.map((g) => (
+                        <button 
+                            key={g.key} 
+                            type="button" 
+                            onClick={() => setGenre(g.key)}
+                        >
+                            {g.name}
+                        </button>
+                    ))}
 
                     <p>현재 선택된 장르: <span >{genre || "없음"}</span></p>
                 </div>
@@ -34,9 +42,9 @@ export default function MainPage() {
                 <div>
                     <p><b>선호하는 영화 시대를 골라보세요</b></p>
                     <select value={era} onChange={(e)=>setEra(e.target.value)}>
-                        <option value="2020s">2020년대</option>
-                        <option value="2010s">2010년대</option>
-                        <option value="2000s">2000년대</option>
+                        {UI_ERAS.map((e) => (
+                            <option key={e.key} value={e.key}>{e.name}</option>
+                        ))}
                     </select>
                 </div>
 
