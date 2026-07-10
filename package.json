@@ -11,9 +11,11 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.101.2",
+    "@types/styled-components": "^5.1.36",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "react-router-dom": "^7.18.1"
+    "react-router-dom": "^7.18.1",
+    "styled-components": "^6.4.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
