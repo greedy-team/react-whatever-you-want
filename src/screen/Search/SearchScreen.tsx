@@ -24,7 +24,7 @@ export function SearchScreen() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [page, setPage] = useState(1);
   const [searched, setSearched] = useState(false); // 검색 실행 여부
-
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
   // 검색 조건을 기억해뒀다가 다음 페이지 요청할 때도 재사용
   const [params, setParams] = useSearchParams();
   const MAX_ATTEMPTS = 3;
@@ -49,9 +49,7 @@ export function SearchScreen() {
         });
         if (gender && gender !== "none") params.append("sexdstnDscd", gender);
 
-        const res = await fetch(
-          `http://localhost:4000/api/missing-persons?${params}`,
-        );
+        const res = await fetch(`${BASE_URL}/missing-persons?${params}`);
         const data = await res.json();
 
         if (data.result !== "00") {

@@ -28,13 +28,11 @@ function getTargetLabel(code: string) {
   };
   return map[code] || code;
 }
-
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 export async function listLoader() {
   const params = new URLSearchParams({ rowSize: "10" });
 
-  const res = await fetch(
-    `http://localhost:4000/api/missing-persons?${params}`,
-  );
+  const res = await fetch(`${BASE_URL}/missing-persons?${params}`);
   const data = await res.json();
 
   if (data.result !== "00") {
