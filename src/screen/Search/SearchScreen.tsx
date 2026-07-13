@@ -191,18 +191,22 @@ export function SearchScreen() {
     <div>
       <h1>Search Screen</h1>
       <div>
-        <span>성별</span>
-        <select ref={genderRef}>
+        <label htmlFor="gender-select">성별</label>
+        <select ref={genderRef} id="gender-select">
           <option value="none">선택안함</option>
           <option value="1">남자</option>
           <option value="2">여자</option>
         </select>
 
-        <span>나이</span>
-        <select ref={ageRef}>
+        <label htmlFor="age-select">나이</label>
+        <select ref={ageRef} id="age-select">
           {age.map((option) => (
             <option key={option} value={option}>
-              {option === 0 ? "10살미만" : option + "대"}
+              {option === 0
+                ? "10살미만"
+                : option === 80
+                  ? "80대이상"
+                  : option + "대"}
             </option>
           ))}
         </select>
