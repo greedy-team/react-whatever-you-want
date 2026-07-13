@@ -1,6 +1,5 @@
-const KEY = import.meta.env.VITE_SEOUL_API_KEY;
-// http만 지원 (https 배포 시 막힘)
-const BASE = "http://swopenapi.seoul.go.kr/api/subway";
+import { SEOUL_API_KEY, SUBWAY_API_ENDPOINT } from "./constants";
+
 // 정상 응답 코드
 const SUCCESS_CODE = "INFO-000";
 
@@ -22,7 +21,7 @@ interface RawArrival {
 
 // 지정 역의 실시간 도착 정보
 export async function getArrivals(station: string): Promise<Arrival[]> {
-  const url = `${BASE}/${KEY}/json/realtimeStationArrival/0/10/${encodeURIComponent(station)}`;
+  const url = `${SUBWAY_API_ENDPOINT}/${SEOUL_API_KEY}/json/realtimeStationArrival/0/10/${encodeURIComponent(station)}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error(`지하철 조회 실패 (HTTP ${res.status})`);
   const json = await res.json();

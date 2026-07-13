@@ -1,6 +1,4 @@
-const KEY = import.meta.env.VITE_DATA_GO_KR_KEY;
-const ENDPOINT =
-  "https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst";
+import { DATA_GO_KR_API_KEY, WEATHER_API_ENDPOINT } from "./constants";
 
 // 광진구 좌표
 const GRID = { nx: 62, ny: 126 };
@@ -49,7 +47,7 @@ export async function getWeather(): Promise<WeatherSummary> {
   const now = new Date();
   const { base_date, base_time } = latestBase(now);
   const params = new URLSearchParams({
-    serviceKey: KEY,
+    serviceKey: DATA_GO_KR_API_KEY,
     dataType: "JSON",
     numOfRows: "1000",
     pageNo: "1",
@@ -59,7 +57,7 @@ export async function getWeather(): Promise<WeatherSummary> {
     ny: String(GRID.ny),
   });
 
-  const res = await fetch(`${ENDPOINT}?${params}`);
+  const res = await fetch(`${WEATHER_API_ENDPOINT}?${params}`);
   if (!res.ok) throw new Error(`날씨 조회 실패 (HTTP ${res.status})`);
   const json = await res.json();
   if (json.response?.header?.resultCode !== SUCCESS_CODE) {

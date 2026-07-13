@@ -1,6 +1,4 @@
-const KEY = import.meta.env.VITE_DATA_GO_KR_KEY;
-const ENDPOINT =
-  "https://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getMsrstnAcctoRltmMesureDnsty";
+import { DATA_GO_KR_API_KEY, AIR_API_ENDPOINT } from "./constants";
 
 const STATION = "광진구";
 
@@ -30,7 +28,7 @@ const grade = (g: string | null): number => Number(g) || 0;
 
 export async function getAir(): Promise<AirSummary> {
   const params = new URLSearchParams({
-    serviceKey: KEY,
+    serviceKey: DATA_GO_KR_API_KEY,
     returnType: "json",
     numOfRows: "1",
     pageNo: "1",
@@ -39,7 +37,7 @@ export async function getAir(): Promise<AirSummary> {
     ver: "1.3",
   });
 
-  const res = await fetch(`${ENDPOINT}?${params}`);
+  const res = await fetch(`${AIR_API_ENDPOINT}?${params}`);
   if (!res.ok) throw new Error(`대기질 조회 실패 (HTTP ${res.status})`);
   const json = await res.json();
   if (json.response?.header?.resultCode !== SUCCESS_CODE) {
