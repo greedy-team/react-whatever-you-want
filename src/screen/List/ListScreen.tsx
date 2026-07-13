@@ -1,20 +1,21 @@
 import { useLoaderData } from "react-router";
 
 interface MissingPerson {
-  rnum: number;
-  occrde: string;
-  alldressingDscd: string | null; // null 가능성 있음
-  ageNow: string; // 문자열 타입 주의
-  age: number;
-  writngTrgetDscd: string;
-  sexdstnDscd: string;
-  etcSpfeatr: string;
-  occrAdres: string;
-  nm: string;
-  msspsnIdntfccd: number;
-  tknphotolength: number;
-  tknphotoFile: string;
+  rnum: number; // 행 번호
+  occrde: string; //발생일
+  alldressingDscd: string | null; // 창의사항
+  ageNow: string; // 현재나이
+  age: number; //당시나이
+  writngTrgetDscd: string;//대상구분코드 ex) 010->정상아동
+  sexdstnDscd: string;//성별
+  etcSpfeatr: string;//신체특징
+  occrAdres: string;//발생장소
+  nm: string; //이름
+  msspsnIdntfccd: number;//실종자 식별코드
+  tknphotolength: number;// 촬영된사진의 길이
+  tknphotoFile: string;//촬영된 사진 파일
 }
+
 function getTargetLabel(code: string) {
   const map: Record<string, string> = {
     "010": "정상아동(18세미만)",
