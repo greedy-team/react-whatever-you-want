@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { NavLink } from "react-router";
 
 export function AppNavigator() {
   return (
@@ -7,13 +7,28 @@ export function AppNavigator() {
       <nav>
         <ul>
           <li>
-            <Link to="/">Search</Link>
+            <NavLink
+              to="/"
+              className={({ isActive }) => (isActive ? "nav-active" : "")}
+            >
+              Search
+            </NavLink>
           </li>
           <li>
-            <Link to="/list">List</Link>
+            <NavLink
+              to="/list"
+              className={({ isActive }) => (isActive ? "nav-active" : "")}
+            >
+              List
+            </NavLink>
           </li>
         </ul>
       </nav>
+      <style>{`
+        .nav-active {
+          color: orange;
+        }
+      `}</style>
     </div>
   );
 }
