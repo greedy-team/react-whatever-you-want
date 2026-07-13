@@ -43,13 +43,14 @@ export function SearchScreen() {
       let lastSuccessPage = targetPage;
 
       while (attempts < MAX_ATTEMPTS) {
-        const params = new URLSearchParams({
+        const fetchParams = new URLSearchParams({
           rowSize: "10",
           page: String(targetPage),
         });
-        if (gender && gender !== "none") params.append("sexdstnDscd", gender);
+        if (gender && gender !== "none")
+          fetchParams.append("sexdstnDscd", gender);
 
-        const res = await fetch(`${BASE_URL}/missing-persons?${params}`);
+        const res = await fetch(`${BASE_URL}/missing-persons?${fetchParams}`);
         const data = await res.json();
 
         if (data.result !== "00") {
@@ -98,7 +99,7 @@ export function SearchScreen() {
       age: ageRef.current?.value ?? "",
     });
     setSearched(true);
-    fetchResults(1, 0); // 검색은 항상 1페이지부터
+    fetchResults(1, "next"); // 검색은 항상 1페이지부터
   }
 
   function handlePrev() {
@@ -106,7 +107,7 @@ export function SearchScreen() {
       setCurrentIndex((prev) => prev - 1);
     } else if (currentIndex === 0 && page > 1) {
       // 이전 페이지로 이동
-      fetchResults(page - 1, 1);
+      fetchResults(page - 1, "prev");
     }
   }
 
@@ -116,7 +117,7 @@ export function SearchScreen() {
       setCurrentIndex((prev) => prev + 1);
     } else {
       // 마지막 사람이었음 -> 다음 페이지 불러오기
-      fetchResults(page + 1, 0);
+      fetchResults(page + 1, "next");
     }
   }
 
