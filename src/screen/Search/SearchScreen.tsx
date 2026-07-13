@@ -14,7 +14,7 @@ interface MissingPerson {
   msspsnIdntfccd: number;
   tknphotoFile: string;
 }
-
+import { useSearchParams } from "react-router";
 export function SearchScreen() {
   const genderRef = useRef<HTMLSelectElement>(null);
   const ageRef = useRef<HTMLSelectElement>(null);
@@ -26,13 +26,14 @@ export function SearchScreen() {
   const [searched, setSearched] = useState(false); // 검색 실행 여부
 
   // 검색 조건을 기억해뒀다가 다음 페이지 요청할 때도 재사용
-  const lastParamsRef = useRef<{ gender?: string; age?: string }>({});
+  const [params, setParams] = useSearchParams();
   const MAX_ATTEMPTS = 3;
   async function fetchResults(
     startPage: number,
     direction: "next" | "prev" = "next",
   ) {
-    const { gender, age } = lastParamsRef.current;
+    const gender = params.get("gender");
+    const age = params.get("age");
     setLoading(true);
 
     try {
@@ -94,10 +95,10 @@ export function SearchScreen() {
   }
 
   function handleSearch() {
-    lastParamsRef.current = {
-      gender: genderRef.current?.value,
-      age: ageRef.current?.value,
-    };
+    setParams({
+      gender: genderRef.current?.value ?? "",
+      age: ageRef.current?.value ?? "",
+    });
     setSearched(true);
     fetchResults(1, 0); // 검색은 항상 1페이지부터
   }
