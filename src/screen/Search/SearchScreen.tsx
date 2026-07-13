@@ -28,6 +28,7 @@ export function SearchScreen() {
   // 검색 조건을 기억해뒀다가 다음 페이지 요청할 때도 재사용
   const [params, setParams] = useSearchParams();
   const [error, setError] = useState<string | null>(null);
+  const [hasNext, setHasNext] = useState(true);
   const MAX_ATTEMPTS = 3;
   async function fetchResults(
     startPage: number,
@@ -85,11 +86,21 @@ export function SearchScreen() {
         if (targetPage < 1) break; // 1페이지 아래로는 못 감
       }
 
-      setResults(filtered);
-      setCurrentIndex(direction === "prev" ? filtered.length - 1 : 0);
-      setPage(lastSuccessPage);
+      if (filtered.length > 0) {
+        // 결과가 있으면 정상적으로 갱신
+        setResults(filtered);
+        setCurrentIndex(direction === "prev" ? filtered.length - 1 : 0);
+        setPage(lastSuccessPage);
+        setHasNext(true);
+      } else if (direction === "next") {
+        setHasNext(false);
+        return;
+      } else {
+        // prev로 성공했다면 다음 페이지(현재 페이지)는 다시 유효하다고 볼 수 있음
+        setHasNext(true);
+      }
     } catch {
-      setError("서버 연결에 실패했습니다");
+      setHasNext(false);
     } finally {
       setLoading(false);
     }
@@ -101,6 +112,7 @@ export function SearchScreen() {
       age: ageRef.current?.value ?? "",
     });
     setSearched(true);
+    setHasNext(true);
     fetchResults(1, "next"); // 검색은 항상 1페이지부터
   }
 
@@ -182,7 +194,9 @@ export function SearchScreen() {
         <p>착의사항: {current.alldressingDscd || "정보 없음"}</p>
         <p>대상구분: {getTargetLabel(current.writngTrgetDscd)}</p>
 
-        <button onClick={handleNext}>▼ 다음</button>
+        <button onClick={handleNext} disabled={!hasNext}>
+          ▼ 다음
+        </button>
       </div>
     );
   }
@@ -214,6 +228,7 @@ export function SearchScreen() {
       <button onClick={handleSearch}>찾아보기</button>
 
       {renderResult()}
+      {!hasNext && <p>이후결과없습니다</p>}
     </div>
   );
 }
