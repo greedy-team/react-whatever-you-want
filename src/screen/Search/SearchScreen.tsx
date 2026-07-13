@@ -186,6 +186,7 @@ export function SearchScreen() {
       </div>
     );
   }
+  const age = [0, 10, 20, 30, 40, 50, 60, 70, 80];
   return (
     <div>
       <h1>Search Screen</h1>
@@ -199,16 +200,11 @@ export function SearchScreen() {
 
         <span>나이</span>
         <select ref={ageRef}>
-          <option value="none">선택안함</option>
-          <option value="0">10살미만</option>
-          <option value="10">10대</option>
-          <option value="20">20대</option>
-          <option value="30">30대</option>
-          <option value="40">40대</option>
-          <option value="50">50대</option>
-          <option value="60">60대</option>
-          <option value="70">70대</option>
-          <option value="80">80대이상</option>
+          {age.map((option) => (
+            <option key={option} value={option}>
+              {option === 0 ? "10살미만" : option + "대"}
+            </option>
+          ))}
         </select>
       </div>
       <button onClick={handleSearch}>찾아보기</button>
