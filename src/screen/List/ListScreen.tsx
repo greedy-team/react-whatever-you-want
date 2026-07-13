@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useLoaderData } from "react-router";
 
 interface MissingPerson {
   rnum: number;
@@ -28,44 +28,27 @@ function getTargetLabel(code: string) {
   };
   return map[code] || code;
 }
+
+export async function listLoader() {
+  const params = new URLSearchParams({ rowSize: "100" });
+
+  const res = await fetch(
+    `http://localhost:4000/api/missing-persons?${params}`,
+  );
+  const data = await res.json();
+
+  if (data.result !== "00") {
+    // throw하면 errorElement가 자동으로 처리해줌
+    throw new Response(data.msg || "데이터를 불러오지 못했습니다", {
+      status: 500,
+    });
+  }
+
+  return data.list as MissingPerson[];
+}
+
 export function ListScreen() {
-  const [results, setResults] = useState<MissingPerson[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
-
-      const params = new URLSearchParams({
-        rowSize: "100",
-      });
-
-      try {
-        const res = await fetch(
-          `http://localhost:4000/api/missing-persons?${params}`,
-        );
-        const data = await res.json();
-
-        if (data.result === "00") {
-          setResults(data.list);
-        } else {
-          setError(data.msg || "데이터를 불러오지 못했습니다");
-        }
-      } catch (err) {
-        console.error(err);
-        setError("서버 연결에 실패했습니다");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  if (loading) return <p>불러오는 중...</p>;
-  if (error) return <p>에러: {error}</p>;
+  const results = useLoaderData() as MissingPerson[];
 
   return (
     <div>

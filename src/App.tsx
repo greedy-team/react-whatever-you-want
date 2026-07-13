@@ -1,21 +1,28 @@
 import React from "react";
 import "./index.css";
-import { Route, BrowserRouter as Router, Routes } from "react-router";
+import { createBrowserRouter, RouterProvider, Outlet } from "react-router";
 import { AppNavigator } from "./navigation/AppNavigator";
 import { SearchScreen } from "./screen/Search/SearchScreen";
-import { ListScreen } from "./screen/List/ListScreen";
-function App() {
+import { ListScreen, listLoader } from "./screen/List/ListScreen";
+function Layout() {
   return (
     <div className="App">
-      <Router>
-        <AppNavigator />
-        <Routes>
-          <Route path="/" element={<SearchScreen />} />
-          <Route path="/list" element={<ListScreen />} />
-        </Routes>
-      </Router>
+      <AppNavigator />
+      <Outlet />
     </div>
   );
+}
+const router = createBrowserRouter([
+  {
+    element: <Layout />,
+    children: [
+      { path: "/", element: <SearchScreen /> },
+      { path: "/list", element: <ListScreen />, loader: listLoader },
+    ],
+  },
+]);
+function App() {
+  return <RouterProvider router={router} />;
 }
 
 export default App;
