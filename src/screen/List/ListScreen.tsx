@@ -30,7 +30,7 @@ function getTargetLabel(code: string) {
 }
 
 export async function listLoader() {
-  const params = new URLSearchParams({ rowSize: "100" });
+  const params = new URLSearchParams({ rowSize: "10" });
 
   const res = await fetch(
     `http://localhost:4000/api/missing-persons?${params}`,
