@@ -36,7 +36,6 @@ export async function listLoader() {
   const data = await res.json();
 
   if (data.result !== "00") {
-    // throw하면 errorElement가 자동으로 처리해줌
     throw new Response(data.msg || "데이터를 불러오지 못했습니다", {
       status: 500,
     });

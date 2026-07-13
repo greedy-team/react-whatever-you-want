@@ -8,6 +8,7 @@ import {
 import { AppNavigator } from "./navigation/AppNavigator";
 import { SearchScreen } from "./screen/Search/SearchScreen";
 import { ListScreen, listLoader } from "./screen/List/ListScreen";
+import { ErrorPage } from "./screen/ErrorPage";
 function Layout() {
   const navigation = useNavigation();
   return (
@@ -22,8 +23,13 @@ const router = createBrowserRouter([
   {
     element: <Layout />,
     children: [
-      { path: "/", element: <SearchScreen /> },
-      { path: "/list", element: <ListScreen />, loader: listLoader },
+      { path: "/", element: <SearchScreen />, errorElement: <ErrorPage /> },
+      {
+        path: "/list",
+        element: <ListScreen />,
+        loader: listLoader,
+        errorElement: <ErrorPage />,
+      },
     ],
   },
 ]);
