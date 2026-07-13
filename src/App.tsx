@@ -7,8 +7,11 @@ import {
 } from "react-router";
 import { AppNavigator } from "./navigation/AppNavigator";
 import { SearchScreen } from "./screen/Search/SearchScreen";
-import { ListScreen, listLoader } from "./screen/List/ListScreen";
-import { ErrorPage } from "./screen/ErrorPage";
+import { ListScreen } from "./screen/List/ListScreen";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
+
 function Layout() {
   const navigation = useNavigation();
   return (
@@ -23,18 +26,20 @@ const router = createBrowserRouter([
   {
     element: <Layout />,
     children: [
-      { path: "/", element: <SearchScreen />, errorElement: <ErrorPage /> },
+      { path: "/", element: <SearchScreen /> },
       {
         path: "/list",
         element: <ListScreen />,
-        loader: listLoader,
-        errorElement: <ErrorPage />,
       },
     ],
   },
 ]);
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
+  );
 }
 
 export default App;

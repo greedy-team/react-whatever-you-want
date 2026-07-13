@@ -8,13 +8,14 @@ const app = express();
 app.use(cors());
 
 app.get("/api/missing-persons", async (req, res) => {
-  const { rowSize, sexdstnDscd, age, page="1" } = req.query;
+  const { rowSize, sexdstnDscd, age, page = "1" } = req.query;
 
   const body = new URLSearchParams();
   body.append("esntlId", process.env.SAFE182_ESNTL_ID);
   body.append("authKey", process.env.SAFE182_AUTH_KEY);
   body.append("rowSize", rowSize);
   body.append("page", page);
+  
 
   if (sexdstnDscd) body.append("sexdstnDscd", sexdstnDscd);
 
@@ -28,16 +29,20 @@ app.get("/api/missing-persons", async (req, res) => {
       },
     );
     const data = await response.json();
+    if (data.result === "00") {
+      const rawCount = data.list.length;
 
-    // ageNow 기준으로 서버에서 직접 필터링
-    if (data.result === "00" && age && age !== "none") {
-      const start = Number(age);
-      const end = age === "80" ? 999 : start + 9;
 
-      data.list = data.list.filter((person) => {
-        const currentAge = Number(person.ageNow);
-        return currentAge >= start && currentAge <= end;
-      });
+      if (age && age !== "none") {
+        const start = Number(age);
+        const end = age === "80" ? 999 : start + 9;
+
+        data.list = data.list.filter((person) => {
+          const currentAge = Number(person.ageNow);
+          return currentAge >= start && currentAge <= end;
+        });
+      }
+      data.hasMore = rawCount === Number(rowSize);
       data.totalCount = data.list.length;
     }
 
