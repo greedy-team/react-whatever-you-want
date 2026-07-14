@@ -1,7 +1,7 @@
 import {GENRE_MAP,UI_ERAS}from"../constants/movieFilters";
 
 export const fetchMovieData=async(genre: string | null, era: string | null) => {
-    const API_KEY="022081e1c47971a54a222e3eacfa4020";
+    const API_KEY=import.meta.env.VITE_TMDB_API_KEY;
     
     const tmdbGenreId = genre ? GENRE_MAP[genre.toLowerCase()] : "";
     const tmdbYear = era ? UI_ERAS.find(e=>e.key===era) : null;
