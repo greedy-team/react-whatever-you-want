@@ -5,10 +5,12 @@ import "./index.css";
 import App from "./App";
 import Briefing from "./pages/Briefing";
 import Favorites from "./pages/Favorites";
+import ErrorPage from "./pages/ErrorPage";
 
 const router = createBrowserRouter([
   {
     element: <App />,
+    errorElement: <ErrorPage />,
     children: [
       { index: true, element: <Briefing /> },
       { path: "favorites", element: <Favorites /> },
