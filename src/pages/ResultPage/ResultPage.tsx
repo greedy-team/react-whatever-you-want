@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { fetchMovieData } from "../../apis/movie";
@@ -6,12 +7,6 @@ import { UI_GENRES, UI_ERAS } from "../../constants/movieFilters";
 import type { Movie, TMDBResponse } from "../../types/movie";
 import { STORAGE_KEYS } from "../../constants/storage";
 
-const selectRandomMovie = (rawData: TMDBResponse) => {
-  if (!rawData?.results || rawData.results.length === 0) return null;
-  const randomIndex = Math.floor(Math.random() * rawData.results.length);
-  return rawData.results[randomIndex];
-};
-
 export default function ResultPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -19,17 +14,31 @@ export default function ResultPage() {
   const genre = searchParams.get("genre");
   const era = searchParams.get("era");
 
-  const {
-    isPending,
-    error,
-    data: randomMovie,
-  } = useQuery({
+  const { isPending, data: movieData } = useQuery({
     queryKey: ["movieRandomDrop", genre, era],
     queryFn: () => fetchMovieData(genre, era),
-
-    select: selectRandomMovie,
     throwOnError: true,
   });
+
+  const [selectedIndex, setSelectedIndex] = useState(() =>
+    Math.floor(Math.random() * 20),
+  );
+
+  const movies = movieData?.results || [];
+
+  const safeIndex = movies.length > 0 ? selectedIndex % movies.length : 0;
+
+  const randomMovie = movies[safeIndex] || null;
+
+  const handleRepick = () => {
+    if (movies.length <= 1) return;
+
+    let nextIndex = selectedIndex;
+    while (nextIndex === selectedIndex) {
+      nextIndex = Math.floor(Math.random() * movies.length);
+    }
+    setSelectedIndex(nextIndex);
+  };
 
   const handleSaveToHistory = () => {
     if (!randomMovie) return;
@@ -96,9 +105,14 @@ export default function ResultPage() {
         </InfoBlock>
 
         {randomMovie && (
-          <PrimaryButton onClick={handleSaveToHistory}>
-            🥳 보관함에 저장하기
-          </PrimaryButton>
+          <>
+            <PrimaryButton onClick={handleSaveToHistory}>
+              🥳 보관함에 저장하기
+            </PrimaryButton>
+            <RepickButton onClick={handleRepick}>
+              🔄 다른 영화 추천받기
+            </RepickButton>
+          </>
         )}
 
         <SecondaryButton onClick={() => navigate("/")}>
@@ -108,6 +122,25 @@ export default function ResultPage() {
     </ResultContainer>
   );
 }
+
+const RepickButton = styled.button`
+  width: 100%;
+  padding: 14px;
+  background-color: #1c1c1c;
+  color: #ffb800;
+  border: 1px solid #ffb800;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 12px;
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: #ffb800;
+    color: #000000;
+  }
+`;
 
 const ResultContainer = styled.main`
   background-color: #141414;
