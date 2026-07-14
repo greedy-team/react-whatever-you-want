@@ -1,4 +1,5 @@
 import {GENRE_MAP,UI_ERAS}from"../constants/movieFilters";
+import type { TMDBResponse } from "../types/movie";
 
 export const fetchMovieData=async(genre: string | null, era: string | null) => {
     const API_KEY=import.meta.env.VITE_TMDB_API_KEY;
@@ -15,5 +16,5 @@ export const fetchMovieData=async(genre: string | null, era: string | null) => {
     if(!response.ok){
         throw new Error("데이터를 가져오는데 실패했습니다.");
     }
-    return response.json();
-}
+    return response.json() as Promise<TMDBResponse>;
+};

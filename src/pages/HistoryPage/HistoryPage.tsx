@@ -1,16 +1,10 @@
 import { useState,useEffect } from "react";
 import styled from "styled-components";
 import { UI_GENRES, UI_ERAS } from "../../constants/movieFilters";
-
-interface SavedMovie{
-    id:number;
-    title:string;
-    genre:string;
-    era:string;
-}
+import type {Movie}from "../../types/movie";
 
 export default function HistoryPage(){
-    const[movies,setMovies]=useState<SavedMovie[]>([]);
+    const[movies,setMovies]=useState<Movie[]>([]);
 
     useEffect(()=>{
         const savedData=JSON.parse(localStorage.getItem("flixdrop_history")||"[]");

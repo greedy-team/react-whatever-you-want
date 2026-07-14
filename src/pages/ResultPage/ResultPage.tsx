@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import{fetchMovieData}from"../../apis/movie";
 import styled from "styled-components";
 import { UI_GENRES, UI_ERAS } from "../../constants/movieFilters";
+import type {Movie}from "../../types/movie";
 
 export default function ResultPage(){
     const navigate=useNavigate();
@@ -27,18 +28,18 @@ export default function ResultPage(){
 
         const existingHistory=JSON.parse(localStorage.getItem("flixdrop_history")||"[]");
 
-        const duplicateArray=existingHistory.filter((item:any)=>item.id===randomMovie.id);
+        const duplicateArray=existingHistory.filter((item:Movie)=>item.id===randomMovie.id);
 
         if (duplicateArray.length>0){
             alert("이미 보관함에 담긴 영화입니다!");
             return;
         }
 
-        const newMovieItem={
+        const newMovieItem: Movie ={
             id:randomMovie.id,
             title:randomMovie.title,
-            genre:genre,
-            era:era,
+            genre:genre||"",
+            era:era||"",
         };
 
         const updatedHistory=[newMovieItem,...existingHistory];
