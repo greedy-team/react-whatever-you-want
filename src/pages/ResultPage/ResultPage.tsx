@@ -3,8 +3,14 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import{fetchMovieData}from"../../apis/movie";
 import styled from "styled-components";
 import { UI_GENRES, UI_ERAS } from "../../constants/movieFilters";
-import type {Movie}from "../../types/movie";
+import type {Movie,TMDBResponse}from "../../types/movie";
 import { STORAGE_KEYS } from "../../constants/storage";
+
+const selectRandomMovie=(rawData:TMDBResponse)=>{
+    if (!rawData?.results || rawData.results.length === 0) return null;
+    const randomIndex = Math.floor(Math.random() * rawData.results.length);
+    return rawData.results[randomIndex];
+};
 
 export default function ResultPage(){
     const navigate=useNavigate();
@@ -17,11 +23,7 @@ export default function ResultPage(){
         queryKey:["movieRandomDrop",genre,era],
         queryFn: () => fetchMovieData(genre, era),
 
-        select: (rawData)=>{
-            if (!rawData?.results || rawData.results.length === 0) return null;
-            const randomIndex = Math.floor(Math.random() * rawData.results.length);
-            return rawData.results[randomIndex];
-        }
+        select: selectRandomMovie
     });
 
     const handleSaveToHistory=()=>{
