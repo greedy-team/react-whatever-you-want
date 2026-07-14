@@ -1,23 +1,20 @@
-import { useState,useEffect } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import { UI_GENRES, UI_ERAS } from "../../constants/movieFilters";
 import type {Movie}from "../../types/movie";
+import { STORAGE_KEYS } from "../../constants/storage";
 
 export default function HistoryPage(){
-    const[movies,setMovies]=useState<Movie[]>([]);
-
-    useEffect(()=>{
-        const savedData=JSON.parse(localStorage.getItem("flixdrop_history")||"[]");
-
-        setMovies(savedData);
-    },[]);
+    const[movies,setMovies]=useState<Movie[]>(()=>{
+        return JSON.parse(localStorage.getItem(STORAGE_KEYS.FLIXDROP_HISTORY)||"[]");
+    });
 
     const handleDeleteMovie=(id:number)=>{
         const updatedMovies=movies.filter(movie=>movie.id!==id);
 
         setMovies(updatedMovies);
 
-        localStorage.setItem("flixdrop_history",JSON.stringify(updatedMovies));
+        localStorage.setItem(STORAGE_KEYS.FLIXDROP_HISTORY,JSON.stringify(updatedMovies));
 
         alert("보관함에서 삭제되었습니다! 🫙");
     };

@@ -4,6 +4,7 @@ import{fetchMovieData}from"../../apis/movie";
 import styled from "styled-components";
 import { UI_GENRES, UI_ERAS } from "../../constants/movieFilters";
 import type {Movie}from "../../types/movie";
+import { STORAGE_KEYS } from "../../constants/storage";
 
 export default function ResultPage(){
     const navigate=useNavigate();
@@ -26,7 +27,7 @@ export default function ResultPage(){
     const handleSaveToHistory=()=>{
         if (!randomMovie)return;
 
-        const existingHistory=JSON.parse(localStorage.getItem("flixdrop_history")||"[]");
+        const existingHistory=JSON.parse(localStorage.getItem(STORAGE_KEYS.FLIXDROP_HISTORY)||"[]");
 
         const duplicateArray=existingHistory.filter((item:Movie)=>item.id===randomMovie.id);
 
@@ -44,7 +45,7 @@ export default function ResultPage(){
 
         const updatedHistory=[newMovieItem,...existingHistory];
 
-        localStorage.setItem("flixdrop_history",JSON.stringify(updatedHistory));
+        localStorage.setItem(STORAGE_KEYS.FLIXDROP_HISTORY,JSON.stringify(updatedHistory));
 
         alert("보관함에 성공적으로 저장되었습니다!");
     }
