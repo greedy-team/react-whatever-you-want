@@ -1,5 +1,8 @@
-export const DATA_GO_KR_API_KEY = import.meta.env.VITE_DATA_GO_KR_KEY;
-export const SEOUL_API_KEY = import.meta.env.VITE_SEOUL_API_KEY;
+// scripts/*.ts는 tsx(Node)로 실행돼 import.meta.env가 없어서 process.env로 대체한다
+export const DATA_GO_KR_API_KEY =
+  import.meta.env?.VITE_DATA_GO_KR_KEY ?? process.env.DATA_GO_KR_KEY;
+export const SEOUL_API_KEY =
+  import.meta.env?.VITE_SEOUL_API_KEY ?? process.env.SEOUL_API_KEY;
 
 export const WEATHER_API_ENDPOINT =
   "https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst";
