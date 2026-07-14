@@ -23,7 +23,8 @@ export default function ResultPage(){
         queryKey:["movieRandomDrop",genre,era],
         queryFn: () => fetchMovieData(genre, era),
 
-        select: selectRandomMovie
+        select: selectRandomMovie,
+        throwOnError:true
     });
 
     const handleSaveToHistory=()=>{
@@ -56,15 +57,6 @@ export default function ResultPage(){
         return(
             <ResultContainer>
                 <MessageText>🍿 취향을 기반으로 영화 탐색 중...</MessageText>
-            </ResultContainer>
-        );
-    }
-
-    if (error){
-        return(
-            <ResultContainer>
-                <MessageText>에러가 발생했습니다. 😥</MessageText>
-                <SecondaryButton onClick={() => navigate("/")}>홈으로 돌아가기</SecondaryButton>
             </ResultContainer>
         );
     }
