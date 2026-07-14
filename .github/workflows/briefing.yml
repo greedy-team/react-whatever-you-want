@@ -1,0 +1,21 @@
+name: Send morning briefing
+
+on:
+  schedule:
+    - cron: "0 22 * * *" # 매일 KST 07:00
+  workflow_dispatch: {} # 수동 실행(테스트용)
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm ci
+      - name: Write .env
+        env:
+          ENV_FILE: ${{ secrets.ENV }}
+        run: printf '%s\n' "$ENV_FILE" > .env
+      - run: npx tsx --env-file=.env scripts/send-briefing.ts
