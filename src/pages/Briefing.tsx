@@ -69,7 +69,6 @@ function Briefing() {
     ) {
       load();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fav.departure]);
 
   return (
@@ -99,8 +98,9 @@ function Briefing() {
         {!air && !airError && <p>불러오는 중…</p>}
         {air && (
           <p>
-            PM2.5 {air.pm25}({GRADE_LABEL[air.pm25Grade]}) · PM10 {air.pm10}(
-            {GRADE_LABEL[air.pm10Grade]})
+            PM2.5 = {air.pm25}㎍/㎥ ({GRADE_LABEL[air.pm25Grade]})
+            <br />
+            PM10 = {air.pm10}㎍/㎥ ({GRADE_LABEL[air.pm10Grade]})
             {air.needMask && " → 마스크 권장"}
           </p>
         )}
