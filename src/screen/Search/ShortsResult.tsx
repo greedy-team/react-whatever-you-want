@@ -3,7 +3,7 @@ import type { MissingPerson } from "../../hooks/missingPersons"; // 실제 타�
 import { getTargetLabel } from "../../hooks/getTargetLabel";
 
 interface ShortsResultProps {
-  isLoading: boolean;
+  isFetching: boolean;
   error: Error | null;
   searched: boolean;
   current?: MissingPerson;
@@ -16,7 +16,7 @@ interface ShortsResultProps {
 }
 
 export function ShortsResult({
-  isLoading,
+  isFetching,
   error,
   searched,
   current,
@@ -27,7 +27,7 @@ export function ShortsResult({
   onPrev,
   onNext,
 }: ShortsResultProps) {
-  if (isLoading) return <p>불러오는 중...</p>;
+  if ( isFetching) return <p>불러오는 중...</p>;
   if (error) return <p style={{ color: "red" }}>에러: {error.message}</p>;
   if (searched && !current) return <p>더 이상 결과가 없습니다.</p>;
   if (!current) return null;

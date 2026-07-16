@@ -34,7 +34,7 @@ export function SearchScreen() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [searched, setSearched] = useState(false);
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isFetching, error } = useQuery({
     queryKey: ["missingPersons", "search", { gender, age, page }],
     queryFn: () =>
       fetchMissingPersons({ rowSize: ROW_SIZE, page, gender, age }),
@@ -95,7 +95,7 @@ export function SearchScreen() {
       <button onClick={handleSearch}>찾아보기</button>
 
       <ShortsResult
-        isLoading={isLoading}
+        isFetching={isFetching}
         error={error}
         searched={searched}
         current={current}
