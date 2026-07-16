@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { fetchMissingPersons } from "../../hooks/missingPersons";
-
+import { getTargetLabel } from "../../hooks/getTargetLabel";
 const AGE_OPTIONS = [
   "none",
   "0",
@@ -21,20 +21,6 @@ function getAgeLabel(value: string): string {
   if (value === "0") return "10살미만";
   if (value === "80") return "80대이상";
   return `${value}대`;
-}
-
-function getTargetLabel(code: string) {
-  const map: Record<string, string> = {
-    "010": "정상아동(18세미만)",
-    "020": "가출인",
-    "040": "시설보호무연고자",
-    "060": "지적장애인",
-    "061": "지적장애인(18세미만)",
-    "062": "지적장애인(18세이상)",
-    "070": "치매질환자",
-    "080": "불상(기타)",
-  };
-  return map[code] || code;
 }
 
 export function SearchScreen() {
@@ -57,7 +43,7 @@ export function SearchScreen() {
 
   const results = data?.list ?? [];
   const current = results[currentIndex];
-  const hasNext = !!data && !data.exhausted; 
+  const hasNext = !!data && !data.exhausted;
 
   function handleSearch() {
     setGender(genderRef.current?.value ?? "none");
@@ -71,7 +57,7 @@ export function SearchScreen() {
     if (currentIndex > 0) {
       setCurrentIndex((prev) => prev - 1);
     } else if (page > 1) {
-      setPage((prev) => prev - 1); 
+      setPage((prev) => prev - 1);
       setCurrentIndex(0);
     }
   }
