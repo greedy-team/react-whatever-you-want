@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { fetchMissingPersons } from "../../hooks/missingPersons";
-import { ShortsResult } from "./shortsResult";
+import { ShortsResult } from "./ShortsResult";
 
 const AGE_OPTIONS = [
   "none",
