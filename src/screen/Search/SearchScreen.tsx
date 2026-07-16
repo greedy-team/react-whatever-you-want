@@ -75,7 +75,8 @@ export function SearchScreen() {
   return (
     <div>
       <h1>Search Screen</h1>
-      <div>
+      <fieldset>
+        <legend>검색 조건</legend>
         <label htmlFor="gender-select">성별</label>
         <select ref={genderRef} id="gender-select">
           <option value="none">선택안함</option>
@@ -91,7 +92,7 @@ export function SearchScreen() {
             </option>
           ))}
         </select>
-      </div>
+      </fieldset>
       <button onClick={handleSearch}>찾아보기</button>
 
       <ShortsResult
