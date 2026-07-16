@@ -1,6 +1,6 @@
 import { fetchMissingPersons } from "../../hooks/missingPersons";
 import { useQuery } from "@tanstack/react-query";
-import { getTargetLabel } from "../../hooks/getTargetLabel";
+import { MissingPersonProfile } from "../../components/MissingPersonProfile";
 
 export function ListScreen() {
   const { data, isLoading, error } = useQuery({
@@ -29,26 +29,7 @@ export function ListScreen() {
               marginBottom: "8px",
             }}
           >
-            {person.tknphotoFile && (
-              <img
-                src={`data:image/jpeg;base64,${person.tknphotoFile}`}
-                alt={person.nm}
-                style={{ maxWidth: "100%", height: "auto" }}
-              />
-            )}
-            <p>
-              <strong>{person.nm}</strong>
-            </p>
-            <p>
-              성별: {person.sexdstnDscd} / 당시나이: {person.age}세 / 현재나이:{" "}
-              {person.ageNow}세
-            </p>
-            <p>신체특징: {person.etcSpfeatr || "정보 없음"}</p>
-            <p>발생일: {person.occrde}</p>
-            <p>발생장소: {person.occrAdres}</p>
-
-            <p>착의사항: {person.alldressingDscd || "정보 없음"}</p>
-            <p>대상구분: {getTargetLabel(person.writngTrgetDscd)}</p>
+            <MissingPersonProfile person={person}></MissingPersonProfile>
           </li>
         ))}
       </ul>
