@@ -1,0 +1,131 @@
+/* ---- 토큰 ---- */
+.profile {
+    --ink: #1f2a24;
+    --muted: #5b6b62;
+    --line: #dde3de;
+    --surface: #ffffff;
+    --accent: #3a6152;
+    /* 차분한 포레스트 그린 — 경계/신뢰의 뉘앙스 */
+    --accent-soft: #eef3f0;
+    --radius: 12px;
+
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 20px;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 20px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    font-family: "Pretendard", "Apple SD Gothic Neo", sans-serif;
+    color: var(--ink);
+}
+
+/* ---- 사진 ---- */
+.photo {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    border-radius: 8px;
+    background: var(--accent-soft);
+    border: 1px solid var(--line);
+}
+
+.photoPlaceholder {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    border-radius: 8px;
+    background: var(--accent-soft);
+    border: 1px dashed var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    font-size: 13px;
+    text-align: center;
+    padding: 8px;
+}
+
+/* ---- 이름/헤더 ---- */
+.header {
+    grid-column: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.name {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0;
+}
+
+.badge {
+    align-self: flex-start;
+    margin-top: 4px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* ---- 정보 목록 (dl) ---- */
+.info {
+    grid-column: 2;
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    row-gap: 8px;
+    column-gap: 12px;
+    margin: 0;
+    font-size: 14px;
+}
+
+.info dt {
+    color: var(--muted);
+    font-weight: 500;
+}
+
+.info dd {
+    margin: 0;
+    line-height: 1.5;
+}
+
+.info dd:empty::before,
+.emptyValue {
+    color: var(--muted);
+    font-style: italic;
+}
+
+/* 신체특징/발생장소처럼 긴 텍스트는 두 칸 다 차지 */
+.infoFull {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    column-gap: 12px;
+    border-top: 1px solid var(--line);
+    padding-top: 8px;
+    margin-top: 4px;
+}
+
+/* ---- 반응형: 좁은 화면에서는 세로 스택 ---- */
+@media (max-width: 420px) {
+    .profile {
+        grid-template-columns: 1fr;
+        max-width: 100%;
+    }
+
+    .header,
+    .info,
+    .infoFull {
+        grid-column: 1;
+    }
+
+    .photo,
+    .photoPlaceholder {
+        aspect-ratio: 4 / 3;
+    }
+}
