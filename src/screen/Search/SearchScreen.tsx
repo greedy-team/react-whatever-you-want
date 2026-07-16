@@ -1,7 +1,8 @@
 import { useRef, useState } from "react";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { fetchMissingPersons } from "../../hooks/missingPersons";
-import { getTargetLabel } from "../../hooks/getTargetLabel";
+import { ShortsResult } from "./shortsResult";
+
 const AGE_OPTIONS = [
   "none",
   "0",
@@ -71,60 +72,6 @@ export function SearchScreen() {
     }
   }
 
-  function renderResult() {
-    if (isLoading) return <p>불러오는 중...</p>;
-    if (error) return <p style={{ color: "red" }}>에러: {error.message}</p>;
-    if (searched && !current) return <p>더 이상 결과가 없습니다.</p>;
-    if (!current) return null;
-
-    return (
-      <div
-        style={{
-          border: "1px solid #ddd",
-          borderRadius: "8px",
-          padding: "16px",
-          maxWidth: "400px",
-          margin: "20px auto",
-          textAlign: "center",
-        }}
-      >
-        <button
-          onClick={handlePrev}
-          disabled={currentIndex === 0 && page === 1}
-        >
-          ▲ 이전
-        </button>
-
-        {current.tknphotoFile && (
-          <img
-            src={`data:image/jpeg;base64,${current.tknphotoFile}`}
-            alt={current.nm}
-            style={{ maxWidth: "100%", height: "auto", margin: "12px 0" }}
-          />
-        )}
-        <p>
-          <strong>{current.nm}</strong>
-        </p>
-        <p>
-          성별: {current.sexdstnDscd} / 당시나이: {current.age}세 / 현재나이:{" "}
-          {current.ageNow}세
-        </p>
-        <p>신체특징: {current.etcSpfeatr || "정보 없음"}</p>
-        <p>발생일: {current.occrde}</p>
-        <p>발생장소: {current.occrAdres}</p>
-        <p>착의사항: {current.alldressingDscd || "정보 없음"}</p>
-        <p>대상구분: {getTargetLabel(current.writngTrgetDscd)}</p>
-
-        <button
-          onClick={handleNext}
-          disabled={currentIndex === results.length - 1 && !hasNext}
-        >
-          ▼ 다음
-        </button>
-      </div>
-    );
-  }
-
   return (
     <div>
       <h1>Search Screen</h1>
@@ -147,7 +94,18 @@ export function SearchScreen() {
       </div>
       <button onClick={handleSearch}>찾아보기</button>
 
-      {renderResult()}
+      <ShortsResult
+        isLoading={isLoading}
+        error={error}
+        searched={searched}
+        current={current}
+        currentIndex={currentIndex}
+        page={page}
+        resultsLength={results.length}
+        hasNext={hasNext}
+        onPrev={handlePrev}
+        onNext={handleNext}
+      />
     </div>
   );
 }
