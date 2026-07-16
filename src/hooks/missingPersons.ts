@@ -2,18 +2,18 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export interface MissingPerson {
   rnum: number;
-  occrde: string;
-  alldressingDscd: string | null;
-  ageNow: string;
-  age: number;
-  writngTrgetDscd: string;
-  sexdstnDscd: string;
-  etcSpfeatr: string;
-  occrAdres: string;
-  nm: string;
-  msspsnIdntfccd: number;
-  tknphotolength: number;
-  tknphotoFile: string;
+  occrde: string; //실종 발생일
+  alldressingDscd: string | null;// 의상착의
+  ageNow: string;//현재나이
+  age: number;// 발생 당시 나이
+  writngTrgetDscd: string;// 작성대상 구분 코드 ex)010->아동
+  sexdstnDscd: string;// 성별 코드
+  etcSpfeatr: string;// 기타 특징
+  occrAdres: string;// 발생 장소
+  nm: string;//이름
+  msspsnIdntfccd: number;// 실종자 코드
+  tknphotolength: number;//사진 데이터길이
+  tknphotoFile: string;//사진파일데이터
 }
 
 interface FetchPageResult {
