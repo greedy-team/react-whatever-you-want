@@ -31,7 +31,10 @@ export default function ErrorPage() {
           </MovieTitleSection>
         </InfoBlock>
 
-        <PrimaryButton onClick={() => navigate("/")}>
+        <PrimaryButton
+          onClick={() => navigate("/")}
+          aria-label="장르 및 시대 선택 화면인 홈으로 돌아가기"
+        >
           🏠 홈으로 돌아가기
         </PrimaryButton>
       </ResultCard>
@@ -51,7 +54,7 @@ const ResultContainer = styled.main`
   justify-content: center;
 `;
 
-const ResultCard = styled.div`
+const ResultCard = styled.article`
   width: 100%;
   max-width: 450px;
   background-color: #000000;
