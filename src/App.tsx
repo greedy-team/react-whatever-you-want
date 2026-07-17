@@ -6,17 +6,9 @@ import ResultPage from "./pages/ResultPage/ResultPage";
 import HistoryPage from "./pages/HistoryPage/HistoryPage";
 import ErrorPage from "./pages/ErrorPage/ErrorPage";
 import { movieQueryOptions } from "./apis/movie";
+import Layout from "./components/Layout/Layout";
 
 const queryClient = new QueryClient();
-
-function Layout() {
-  return (
-    <>
-      <Header />
-      <Outlet />
-    </>
-  );
-}
 
 const router = createBrowserRouter([
   {

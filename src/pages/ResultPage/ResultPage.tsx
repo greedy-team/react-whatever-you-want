@@ -14,7 +14,7 @@ export default function ResultPage() {
   const genre = searchParams.get("genre");
   const era = searchParams.get("era");
 
-  const { isPending, data: movieData } = useQuery({
+  const { data: movieData } = useQuery({
     ...movieQueryOptions(genre, era),
     throwOnError: true,
   });
@@ -71,14 +71,6 @@ export default function ResultPage() {
 
     alert("보관함에 성공적으로 저장되었습니다!");
   };
-
-  if (isPending) {
-    return (
-      <ResultContainer>
-        <MessageText>🍿 취향을 기반으로 영화 탐색 중...</MessageText>
-      </ResultContainer>
-    );
-  }
 
   const movieTitle =
     randomMovie?.title || `선택하신 조건에 맞는 추천 영화가 없습니다.`;
@@ -208,13 +200,6 @@ const MovieTitle = styled.h3`
   color: #ffb800;
   margin: 6px 0 0 0;
   line-height: 1.4;
-`;
-
-const MessageText = styled.h2`
-  font-size: 20px;
-  color: #ffffff;
-  font-weight: 500;
-  margin-bottom: 20px;
 `;
 
 const PrimaryButton = styled.button`
