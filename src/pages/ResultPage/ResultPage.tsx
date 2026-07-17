@@ -97,16 +97,25 @@ export default function ResultPage() {
 
         {randomMovie && (
           <>
-            <PrimaryButton onClick={handleSaveToHistory}>
+            <PrimaryButton
+              onClick={handleSaveToHistory}
+              aria-label="추천된 영화를 보관함에 저장하기"
+            >
               🥳 보관함에 저장하기
             </PrimaryButton>
-            <RepickButton onClick={handleRepick}>
+            <RepickButton
+              onClick={handleRepick}
+              aria-label="조건에 맞는 다른 영화 다시 추천받기"
+            >
               🔄 다른 영화 추천받기
             </RepickButton>
           </>
         )}
 
-        <SecondaryButton onClick={() => navigate("/")}>
+        <SecondaryButton
+          onClick={() => navigate("/")}
+          aria-label="장르 및 시대 필터 선택 화면으로 돌아가기"
+        >
           🔄 필터 다시 고르기
         </SecondaryButton>
       </ResultCard>
@@ -145,7 +154,7 @@ const ResultContainer = styled.main`
   justify-content: center;
 `;
 
-const ResultCard = styled.div`
+const ResultCard = styled.article`
   width: 100%;
   max-width: 450px;
   background-color: #000000;

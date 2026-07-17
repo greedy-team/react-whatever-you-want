@@ -37,21 +37,24 @@ export default function HistoryPage() {
               <MovieInfo>
                 <MovieTitle>{movie.title}</MovieTitle>
                 <MovieMeta>
+                  <span aria-hidden="true">🎭</span>{" "}
                   <span>
-                    🎭{" "}
                     {UI_GENRES.find((g) => g.key === movie.genre)?.name ||
                       movie.genre}
                   </span>
                   <span> • </span>
+                  <span aria-hidden="true">📅</span>{" "}
                   <span>
-                    📅{" "}
                     {UI_ERAS.find((e) => e.key === movie.era)?.name ||
                       movie.era}
                   </span>
                 </MovieMeta>
               </MovieInfo>
 
-              <DeleteButton onClick={() => handleDeleteMovie(movie.id)}>
+              <DeleteButton
+                onClick={() => handleDeleteMovie(movie.id)}
+                aria-label={`${movie.title} 보관함에서 삭제`}
+              >
                 지우기
               </DeleteButton>
             </MovieCard>
@@ -87,7 +90,7 @@ const Subtitle = styled.p`
   text-align: center;
 `;
 
-const MovieList = styled.div`
+const MovieList = styled.ul`
   width: 100%;
   max-width: 550px;
   display: flex;
@@ -95,7 +98,7 @@ const MovieList = styled.div`
   gap: 16px;
 `;
 
-const MovieCard = styled.div`
+const MovieCard = styled.li`
   background-color: #1f1f1f;
   padding: 20px;
   border-radius: 6px;
