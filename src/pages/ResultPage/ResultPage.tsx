@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { fetchMovieData } from "../../apis/movie";
 import styled from "styled-components";
 import { UI_GENRES, UI_ERAS } from "../../constants/movieFilters";
-import type { Movie, TMDBResponse } from "../../types/movie";
+import type { Movie } from "../../types/movie";
 import { STORAGE_KEYS } from "../../constants/storage";
+import { movieQueryOptions } from "../../apis/movie";
 
 export default function ResultPage() {
   const navigate = useNavigate();
@@ -15,8 +15,7 @@ export default function ResultPage() {
   const era = searchParams.get("era");
 
   const { isPending, data: movieData } = useQuery({
-    queryKey: ["movieRandomDrop", genre, era],
-    queryFn: () => fetchMovieData(genre, era),
+    ...movieQueryOptions(genre, era),
     throwOnError: true,
   });
 

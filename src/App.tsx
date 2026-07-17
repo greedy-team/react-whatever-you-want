@@ -5,6 +5,9 @@ import MainPage from "./pages/MainPage/MainPage";
 import ResultPage from "./pages/ResultPage/ResultPage";
 import HistoryPage from "./pages/HistoryPage/HistoryPage";
 import ErrorPage from "./pages/ErrorPage/ErrorPage";
+import { movieQueryOptions } from "./apis/movie";
+
+const queryClient = new QueryClient();
 
 function Layout() {
   return (
@@ -28,6 +31,15 @@ const router = createBrowserRouter([
       {
         path: "result/random",
         element: <ResultPage />,
+        loader: async ({ request }) => {
+          const url = new URL(request.url);
+          const genre = url.searchParams.get("genre");
+          const era = url.searchParams.get("era");
+
+          await queryClient.ensureQueryData(movieQueryOptions(genre, era));
+
+          return null;
+        },
       },
       {
         path: "history",
@@ -36,8 +48,6 @@ const router = createBrowserRouter([
     ],
   },
 ]);
-
-const queryClient = new QueryClient();
 
 export default function App() {
   return (

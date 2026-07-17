@@ -1,3 +1,4 @@
+import { queryOptions } from "@tanstack/react-query";
 import { GENRE_MAP, UI_ERAS } from "../constants/movieFilters";
 import type { TMDBResponse } from "../types/movie";
 
@@ -21,3 +22,9 @@ export const fetchMovieData = async (
   }
   return response.json() as Promise<TMDBResponse>;
 };
+
+export const movieQueryOptions = (genre: string | null, era: string | null) =>
+  queryOptions({
+    queryKey: ["movieRandomDrop", genre, era],
+    queryFn: () => fetchMovieData(genre, era),
+  });
