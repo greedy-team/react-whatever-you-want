@@ -2,7 +2,11 @@ import { useRouteError, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 export default function ErrorPage() {
-  const error = useRouteError() as any;
+  const error = useRouteError() as {
+    status?: number;
+    statusText?: string;
+    message?: string;
+  };
   const navigate = useNavigate();
 
   const is404 = error?.status === 404;

@@ -1,6 +1,5 @@
-import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import Header from "./components/Header/Header";
 import MainPage from "./pages/MainPage/MainPage";
 import ResultPage from "./pages/ResultPage/ResultPage";
 import HistoryPage from "./pages/HistoryPage/HistoryPage";
