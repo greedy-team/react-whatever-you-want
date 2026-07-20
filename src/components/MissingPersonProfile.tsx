@@ -47,7 +47,13 @@ export function MissingPersonProfile({ person }: MissingPersonProfileProps) {
         <dd>{person.ageNow}세</dd>
 
         <dt>발생일</dt>
-        <dd>{person.occrde}</dd>
+        <dd>
+          <time
+            dateTime={`${person.occrde.slice(0, 4)}-${person.occrde.slice(4, 6)}-${person.occrde.slice(6, 8)}`}
+          >
+            {person.occrde}
+          </time>
+        </dd>
       </dl>
 
       <dl className={styles.info}>
