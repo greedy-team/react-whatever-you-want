@@ -1,5 +1,5 @@
 import { getWeather } from "../src/api/weather";
-import { getAir, GRADE_LABEL } from "../src/api/air";
+import { getAir, AIR_GRADE_LABEL } from "../src/api/air";
 import { getArrivals } from "../src/api/subway";
 import { getFavorite } from "../src/lib/favorites";
 
@@ -26,7 +26,7 @@ async function getWeatherText() {
 
 async function getAirText() {
   const a = await getAir();
-  return `PM2.5 ${GRADE_LABEL[a.pm25Grade]} · PM10 ${GRADE_LABEL[a.pm10Grade]}${a.needMask ? " 😷" : ""}`;
+  return `PM2.5 ${AIR_GRADE_LABEL[a.pm25Grade]} · PM10 ${AIR_GRADE_LABEL[a.pm10Grade]}${a.needMask ? " 😷" : ""}`;
 }
 
 async function getSubwayText() {

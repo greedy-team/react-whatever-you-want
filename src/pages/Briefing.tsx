@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getWeather, type WeatherSummary } from "../api/weather";
-import { getAir, GRADE_LABEL, type AirSummary } from "../api/air";
+import { getAir, AIR_GRADE_LABEL, type AirSummary } from "../api/air";
 import { getArrivals, type Arrival } from "../api/subway";
 import { getFavorite } from "../lib/favorites";
 
@@ -98,9 +98,9 @@ function Briefing() {
         {!air && !airError && <p>불러오는 중…</p>}
         {air && (
           <p>
-            PM2.5 = {air.pm25}㎍/㎥ ({GRADE_LABEL[air.pm25Grade]})
+            PM2.5 = {air.pm25}㎍/㎥ ({AIR_GRADE_LABEL[air.pm25Grade]})
             <br />
-            PM10 = {air.pm10}㎍/㎥ ({GRADE_LABEL[air.pm10Grade]})
+            PM10 = {air.pm10}㎍/㎥ ({AIR_GRADE_LABEL[air.pm10Grade]})
             {air.needMask && " → 마스크 권장"}
           </p>
         )}
@@ -116,8 +116,8 @@ function Briefing() {
             {arrivals.slice(0, 6).map((a) => (
               // 완전히 고유한 ID는 API에 없어서, index보다 안정적인 조합을 key로 사용
               // (참고: https://ko.legacy.reactjs.org/docs/lists-and-keys.html)
-              <li key={`${a.line}-${a.direction}-${a.dest}`}>
-                [{a.direction}] {a.dest} — {a.message}
+              <li key={`${a.lineId}-${a.direction}-${a.destination}`}>
+                [{a.direction}] {a.destination} — {a.message}
               </li>
             ))}
           </ul>
