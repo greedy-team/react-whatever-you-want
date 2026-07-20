@@ -4,6 +4,10 @@ import { getAir, AIR_GRADE_LABEL, type AirSummary } from "../api/air";
 import { getArrivals, type Arrival } from "../api/subway";
 import { getFavorite } from "../lib/favorites";
 
+function errorMessage(err: unknown): string {
+  return err instanceof Error ? err.message : "알 수 없는 오류";
+}
+
 // 불러온 데이터를 컴포넌트 밖에 저장한다.
 // 페이지를 왕복해도 이 값이 남아서 다시 안 부른다. 새로고침 버튼으로만 갱신.
 const cache: {
@@ -18,45 +22,54 @@ function Briefing() {
   const fav = getFavorite();
 
   const [weather, setWeather] = useState(cache.weather);
-  const [weatherError, setWeatherError] = useState(false);
+  const [weatherError, setWeatherError] = useState<string | null>(null);
 
   const [air, setAir] = useState(cache.air);
-  const [airError, setAirError] = useState(false);
+  const [airError, setAirError] = useState<string | null>(null);
 
   const [arrivals, setArrivals] = useState(
     cache.station === fav.departure ? cache.arrivals : null,
   );
-  const [arrivalsError, setArrivalsError] = useState(false);
+  const [arrivalsError, setArrivalsError] = useState<string | null>(null);
 
   // 3개를 모두 다시 불러오고 캐시에 저장한다 (처음 한 번 + 새로고침 버튼)
   function load() {
     setWeather(null);
-    setWeatherError(false);
+    setWeatherError(null);
     getWeather()
       .then((w) => {
         cache.weather = w;
         setWeather(w);
       })
-      .catch(() => setWeatherError(true));
+      .catch((err: unknown) => {
+        console.error("날씨 조회 실패:", err);
+        setWeatherError(errorMessage(err));
+      });
 
     setAir(null);
-    setAirError(false);
+    setAirError(null);
     getAir()
       .then((a) => {
         cache.air = a;
         setAir(a);
       })
-      .catch(() => setAirError(true));
+      .catch((err: unknown) => {
+        console.error("미세먼지 조회 실패:", err);
+        setAirError(errorMessage(err));
+      });
 
     setArrivals(null);
-    setArrivalsError(false);
+    setArrivalsError(null);
     getArrivals(fav.departure)
       .then((list) => {
         cache.arrivals = list;
         cache.station = fav.departure;
         setArrivals(list);
       })
-      .catch(() => setArrivalsError(true));
+      .catch((err: unknown) => {
+        console.error("지하철 조회 실패:", err);
+        setArrivalsError(errorMessage(err));
+      });
   }
 
   useEffect(() => {
@@ -82,7 +95,7 @@ function Briefing() {
 
       <article>
         <h3>☔ 날씨</h3>
-        {weatherError && <p role="alert">날씨 정보를 불러오지 못했습니다.</p>}
+        {weatherError && <p role="alert">{weatherError}</p>}
         {!weather && !weatherError && <p>불러오는 중…</p>}
         {weather && (
           <p>
@@ -94,7 +107,7 @@ function Briefing() {
 
       <article>
         <h3>😷 미세먼지</h3>
-        {airError && <p role="alert">미세먼지 정보를 불러오지 못했습니다.</p>}
+        {airError && <p role="alert">{airError}</p>}
         {!air && !airError && <p>불러오는 중…</p>}
         {air && (
           <p>
@@ -108,7 +121,7 @@ function Briefing() {
 
       <article>
         <h3>🚇 {fav.departure}역 도착 정보</h3>
-        {arrivalsError && <p role="alert">도착 정보를 불러오지 못했습니다.</p>}
+        {arrivalsError && <p role="alert">{arrivalsError}</p>}
         {!arrivals && !arrivalsError && <p>불러오는 중…</p>}
         {arrivals && arrivals.length === 0 && <p>도착 예정 열차가 없습니다.</p>}
         {arrivals && arrivals.length > 0 && (

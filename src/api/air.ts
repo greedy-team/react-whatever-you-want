@@ -1,4 +1,5 @@
 import { DATA_GO_KR_API_KEY, AIR_API_ENDPOINT } from "./constants";
+import { ApiError } from "./ApiError";
 
 const AIR_STATION_NAME = "광진구";
 
@@ -39,16 +40,19 @@ export async function getAir(): Promise<AirSummary> {
   });
 
   const res = await fetch(`${AIR_API_ENDPOINT}?${params}`);
-  if (!res.ok) throw new Error(`대기질 조회 실패 (HTTP ${res.status})`);
+  if (!res.ok)
+    throw new ApiError(`대기질 조회 실패 (HTTP ${res.status})`, `HTTP_${res.status}`);
   const json = await res.json();
-  if (json.response?.header?.resultCode !== SUCCESS_CODE) {
-    throw new Error(
+  const resultCode = json.response?.header?.resultCode;
+  if (resultCode !== SUCCESS_CODE) {
+    throw new ApiError(
       `대기질 조회 실패: ${json.response?.header?.resultMsg ?? "알 수 없음"}`,
+      resultCode ?? "UNKNOWN",
     );
   }
 
   const item: AirQualityItem | undefined = json.response.body.items[0];
-  if (!item) throw new Error("대기질 측정값이 없습니다");
+  if (!item) throw new ApiError("대기질 측정값이 없습니다", "NO_DATA");
 
   const pm10Grade = parseGrade(item.pm10Grade);
   const pm25Grade = parseGrade(item.pm25Grade);

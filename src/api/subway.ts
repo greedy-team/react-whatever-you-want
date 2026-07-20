@@ -1,4 +1,5 @@
 import { SEOUL_API_KEY, SUBWAY_API_ENDPOINT } from "./constants";
+import { ApiError } from "./ApiError";
 
 const SUCCESS_CODE = "INFO-000";
 
@@ -21,13 +22,17 @@ interface SubwayArrivalItem {
 export async function getArrivals(station: string): Promise<Arrival[]> {
   const url = `${SUBWAY_API_ENDPOINT}/${SEOUL_API_KEY}/json/realtimeStationArrival/0/10/${encodeURIComponent(station)}`;
   const res = await fetch(url);
-  if (!res.ok) throw new Error(`지하철 조회 실패 (HTTP ${res.status})`);
+  if (!res.ok)
+    throw new ApiError(`지하철 조회 실패 (HTTP ${res.status})`, `HTTP_${res.status}`);
   const json = await res.json();
 
   // 성공해도 최상위 키 이름이 errorMessage라 안의 code로 판별해야 한다
   const code = json.errorMessage?.code;
   if (code && code !== SUCCESS_CODE) {
-    throw new Error(`지하철 조회 실패: ${json.errorMessage?.message ?? code}`);
+    throw new ApiError(
+      `지하철 조회 실패: ${json.errorMessage?.message ?? code}`,
+      code,
+    );
   }
 
   const arrivalItems: SubwayArrivalItem[] = json.realtimeArrivalList ?? [];

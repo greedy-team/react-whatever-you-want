@@ -1,4 +1,5 @@
 import { DATA_GO_KR_API_KEY, WEATHER_API_ENDPOINT } from "./constants";
+import { ApiError } from "./ApiError";
 
 // 광진구 좌표를 기상청 격자(X, Y)로 변환한 값
 const GRID = { nx: 62, ny: 126 };
@@ -67,11 +68,14 @@ export async function getWeather(): Promise<WeatherSummary> {
   });
 
   const res = await fetch(`${WEATHER_API_ENDPOINT}?${params}`);
-  if (!res.ok) throw new Error(`날씨 조회 실패 (HTTP ${res.status})`);
+  if (!res.ok)
+    throw new ApiError(`날씨 조회 실패 (HTTP ${res.status})`, `HTTP_${res.status}`);
   const json = await res.json();
-  if (json.response?.header?.resultCode !== SUCCESS_CODE) {
-    throw new Error(
+  const resultCode = json.response?.header?.resultCode;
+  if (resultCode !== SUCCESS_CODE) {
+    throw new ApiError(
       `날씨 조회 실패: ${json.response?.header?.resultMsg ?? "알 수 없음"}`,
+      resultCode ?? "UNKNOWN",
     );
   }
 
