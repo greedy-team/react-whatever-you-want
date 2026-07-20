@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
-import { fetchMissingPersons } from "../../hooks/missingPersons";
+import { fetchMissingPersons } from "../../api/missingPersons";
 import { ShortsResult } from "./ShortsResult";
 
 const AGE_OPTIONS = [
@@ -40,6 +40,7 @@ export function SearchScreen() {
       fetchMissingPersons({ rowSize: ROW_SIZE, page, gender, age }),
     enabled: searched,
     placeholderData: keepPreviousData,
+    staleTime: 5 * 60 * 1000,
   });
 
   const results = data?.list ?? [];

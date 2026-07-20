@@ -1,5 +1,5 @@
 // ShortsResult.tsx (같은 폴더에 별도 파일로 빼도 되고, 같은 파일 안에 둬도 됩니다)
-import type { MissingPerson } from "../../hooks/missingPersons"; // 실제 타입 export 경로에 맞게 수정
+import type { MissingPerson } from "../../api/missingPersons"; // 실제 타입 export 경로에 맞게 수정
 import { MissingPersonProfile } from "../../components/MissingPersonProfile";
 
 interface ShortsResultProps {

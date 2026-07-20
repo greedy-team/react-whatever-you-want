@@ -1,5 +1,5 @@
-import { getTargetLabel } from "../hooks/getTargetLabel";
-import type { MissingPerson } from "../hooks/missingPersons";
+import { getTargetLabel } from "../utils/getTargetLabel";
+import type { MissingPerson } from "../api/missingPersons";
 import styles from "./MissingPersonProfile.module.css";
 
 interface MissingPersonProfileProps {

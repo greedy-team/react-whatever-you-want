@@ -1,4 +1,4 @@
-import { fetchMissingPersons } from "../../hooks/missingPersons";
+import { fetchMissingPersons } from "../../api/missingPersons";
 import { useQuery } from "@tanstack/react-query";
 import { MissingPersonProfile } from "../../components/MissingPersonProfile";
 
