@@ -56,26 +56,24 @@ export function MissingPersonProfile({ person }: MissingPersonProfileProps) {
         <dd>{person.occrde}</dd>
       </dl>
 
-      <div className={styles.infoFull}>
-        <dl className={styles.info} style={{ gridColumn: "1 / -1" }}>
-          <dt>발생장소</dt>
-          <dd>{person.occrAdres}</dd>
+      <dl className={styles.info}>
+        <dt>발생장소</dt>
+        <dd>{person.occrAdres}</dd>
 
-          <dt>신체특징</dt>
-          <dd>
-            {person.etcSpfeatr || (
-              <span className={styles.emptyValue}>정보 없음</span>
-            )}
-          </dd>
+        <dt>신체특징</dt>
+        <dd>
+          {person.etcSpfeatr || (
+            <span className={styles.emptyValue}>정보 없음</span>
+          )}
+        </dd>
 
-          <dt>착의사항</dt>
-          <dd>
-            {person.alldressingDscd || (
-              <span className={styles.emptyValue}>정보 없음</span>
-            )}
-          </dd>
-        </dl>
-      </div>
+        <dt>착의사항</dt>
+        <dd>
+          {person.alldressingDscd || (
+            <span className={styles.emptyValue}>정보 없음</span>
+          )}
+        </dd>
+      </dl>
     </article>
   );
 }

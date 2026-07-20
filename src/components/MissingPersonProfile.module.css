@@ -75,7 +75,13 @@
 
 /* ---- 정보 목록 (dl) ---- */
 .info {
-    grid-column: 2;
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    column-gap: 12px;
+    border-top: 1px solid var(--line);
+    padding-top: 8px;
+    margin-top: 4px;
     display: grid;
     grid-template-columns: 72px 1fr;
     row-gap: 8px;
@@ -100,16 +106,7 @@
     font-style: italic;
 }
 
-/* 신체특징/발생장소처럼 긴 텍스트는 두 칸 다 차지 */
-.infoFull {
-    grid-column: 1 / -1;
-    display: grid;
-    grid-template-columns: 72px 1fr;
-    column-gap: 12px;
-    border-top: 1px solid var(--line);
-    padding-top: 8px;
-    margin-top: 4px;
-}
+
 
 /* ---- 반응형: 좁은 화면에서는 세로 스택 ---- */
 @media (max-width: 420px) {
