@@ -26,13 +26,7 @@ export function MissingPersonProfile({ person }: MissingPersonProfileProps) {
           alt={`${person.nm}의 사진`}
         />
       ) : (
-        <div
-          className={styles.photoPlaceholder}
-          role="img"
-          aria-label="사진 정보 없음"
-        >
-          사진 없음
-        </div>
+        <div className={styles.photoPlaceholder}>사진 없음</div>
       )}
 
       <header className={styles.header}>
