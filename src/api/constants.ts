@@ -12,3 +12,6 @@ export const AIR_API_ENDPOINT =
 
 // http만 지원 (https 배포 시 막힘)
 export const SUBWAY_API_ENDPOINT = "http://swopenapi.seoul.go.kr/api/subway";
+
+// 지하철역 전체 목록(마스터) 조회용. 실시간 도착정보와 도메인이 다르다.
+export const STATION_MASTER_ENDPOINT = "http://openapi.seoul.go.kr:8088";
