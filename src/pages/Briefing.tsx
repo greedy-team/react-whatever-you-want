@@ -113,8 +113,10 @@ function Briefing() {
         {arrivals && arrivals.length === 0 && <p>도착 예정 열차가 없습니다.</p>}
         {arrivals && arrivals.length > 0 && (
           <ul>
-            {arrivals.slice(0, 6).map((a, i) => (
-              <li key={i}>
+            {arrivals.slice(0, 6).map((a) => (
+              // 완전히 고유한 ID는 API에 없어서, index보다 안정적인 조합을 key로 사용
+              // (참고: https://ko.legacy.reactjs.org/docs/lists-and-keys.html)
+              <li key={`${a.line}-${a.direction}-${a.dest}`}>
                 [{a.direction}] {a.dest} — {a.message}
               </li>
             ))}
