@@ -3,10 +3,7 @@ import { getWeather, type WeatherSummary } from "../api/weather";
 import { getAir, AIR_GRADE_LABEL, type AirSummary } from "../api/air";
 import { getArrivals, type Arrival } from "../api/subway";
 import { getFavorite } from "../lib/favorites";
-
-function errorMessage(err: unknown): string {
-  return err instanceof Error ? err.message : "알 수 없는 오류";
-}
+import { errorMessage } from "../lib/errorMessage";
 
 // 불러온 데이터를 컴포넌트 밖에 저장한다.
 // 페이지를 왕복해도 이 값이 남아서 다시 안 부른다. 새로고침 버튼으로만 갱신.
