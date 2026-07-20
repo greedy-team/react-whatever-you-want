@@ -73,7 +73,7 @@ function Briefing() {
 
   return (
     <section>
-      <h2>
+      <h2 aria-label="오늘의 브리핑">
         오늘의 브리핑{" "}
         <button type="button" className="refresh" onClick={load}>
           새로고침
