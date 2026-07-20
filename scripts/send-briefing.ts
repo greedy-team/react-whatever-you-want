@@ -90,8 +90,9 @@ const [weather, air, subway] = await Promise.all([
   section(`🚇${STATION}`, getSubwayText),
 ]);
 
-// text 템플릿은 200자 제한이라 넘으면 잘라낸다
-const text = `${weather}\n${air}\n${subway}`.slice(0, 200);
+// text 템플릿은 200자 제한이라 넘으면 잘라내고, 잘렸다는 걸 알 수 있도록 말줄임표를 붙인다
+const raw = `${weather}\n${air}\n${subway}`;
+const text = raw.length > 200 ? `${raw.slice(0, 197)}...` : raw;
 
 const accessToken = await refreshAccessToken();
 const result = await sendKakaoMessage(accessToken, text);
