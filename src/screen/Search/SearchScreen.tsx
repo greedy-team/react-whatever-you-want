@@ -3,26 +3,26 @@ import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { fetchMissingPersons } from "../../api/missingPersons";
 import { ShortsResult } from "./ShortsResult";
 
-const AGE_OPTIONS = [
-  "none",
-  "0",
-  "10",
-  "20",
-  "30",
-  "40",
-  "50",
-  "60",
-  "70",
-  "80",
-];
+// const AGE_OPTIONS = [
+//   "none",
+//   "0",
+//   "10",
+//   "20",
+//   "30",
+//   "40",
+//   "50",
+//   "60",
+//   "70",
+//   "80",
+// ];
 const ROW_SIZE = 10;
 
-function getAgeLabel(value: string): string {
-  if (value === "none") return "선택안함";
-  if (value === "0") return "10살미만";
-  if (value === "80") return "80대이상";
-  return `${value}대`;
-}
+// function getAgeLabel(value: string): string {
+//   if (value === "none") return "선택안함";
+//   if (value === "0") return "10살미만";
+//   if (value === "80") return "80대이상";
+//   return `${value}대`;
+// }
 
 export function SearchScreen() {
   const genderRef = useRef<HTMLSelectElement>(null);
@@ -85,14 +85,14 @@ export function SearchScreen() {
           <option value="2">여자</option>
         </select>
 
-        <label htmlFor="age-select">나이</label>
+        {/* <label htmlFor="age-select">나이</label>
         <select ref={ageRef} id="age-select">
           {AGE_OPTIONS.map((option) => (
             <option key={option} value={option}>
               {getAgeLabel(option)}
             </option>
           ))}
-        </select>
+        </select> */}
       </fieldset>
       <button onClick={handleSearch}>찾아보기</button>
 
