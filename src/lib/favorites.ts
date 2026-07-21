@@ -4,7 +4,7 @@ export interface Favorite {
 }
 
 const KEY = "nagado.favorite";
-const DEFAULT: Favorite = { departure: "아차산", arrival: "" };
+const DEFAULT: Favorite = { departure: "아차산(어린이대공원후문)", arrival: "" };
 
 export function getFavorite(): Favorite {
   try {

@@ -28,3 +28,34 @@ main {
   font-size: 0.85rem;
   cursor: pointer;
 }
+
+.station-combobox {
+  position: relative;
+  display: inline-block;
+}
+
+.station-combobox-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 10;
+  margin: 0.2rem 0 0;
+  padding: 0.2rem 0;
+  min-width: 100%;
+  max-height: 12rem;
+  overflow-y: auto;
+  list-style: none;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.station-combobox-list li {
+  padding: 0.4rem 0.6rem;
+  cursor: pointer;
+}
+
+.station-combobox-option-active {
+  background: #eef;
+}

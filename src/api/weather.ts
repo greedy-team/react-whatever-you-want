@@ -1,14 +1,16 @@
-const KEY = import.meta.env.VITE_DATA_GO_KR_KEY;
-const ENDPOINT =
-  "https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst";
+import { DATA_GO_KR_API_KEY, WEATHER_API_ENDPOINT } from "./constants";
+import { ApiError } from "./ApiError";
 
-// 광진구 좌표
+// 광진구 좌표를 기상청 격자(X, Y)로 변환한 값
 const GRID = { nx: 62, ny: 126 };
 
-// 정상 응답 코드
 const SUCCESS_CODE = "00";
-// 강수확률 이 값 이상이면 우산
-const UMBRELLA_POP = 50;
+const UMBRELLA_POP_THRESHOLD = 50;
+
+// 기상청 단기예보 발표 시각 (하루 8회, 3시간 간격) — 최신 순
+const PUBLISH_HOURS = [23, 20, 17, 14, 11, 8, 5, 2];
+// 발표 후 API에 실제로 반영되기까지의 지연 시간 (분)
+const PUBLISH_DELAY_MINUTES = 10;
 
 export interface WeatherSummary {
   minTemp: string; // 최저기온 (℃)
@@ -18,38 +20,44 @@ export interface WeatherSummary {
   needUmbrella: boolean; // 우산 필요 여부
 }
 
-interface FcstItem {
-  category: string;
-  fcstDate: string;
-  fcstValue: string;
+// 기상청 단기예보 응답의 개별 항목 (한 시각·한 항목당 한 줄로 옴)
+interface ForecastItem {
+  category: string; // 항목 코드 (TMN=최저기온, TMX=최고기온, POP=강수확률, PTY=강수형태)
+  fcstDate: string; // 예보 날짜 (YYYYMMDD)
+  fcstValue: string; // 예보 값
 }
 
-function pad(n: number): string {
+function padTwoDigits(n: number): string {
   return String(n).padStart(2, "0");
 }
 
-function fmtDate(d: Date): string {
-  return `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}`;
+function formatDate(d: Date): string {
+  return `${d.getFullYear()}${padTwoDigits(d.getMonth() + 1)}${padTwoDigits(d.getDate())}`;
 }
 
-// 지금 기준 가장 최근 발표 시각
-function latestBase(now: Date): { base_date: string; base_time: string } {
-  const slots = [2300, 2000, 1700, 1400, 1100, 800, 500, 200];
+// 기상청 API는 base_date/base_time으로 발표 회차를 지정해야 해서, 지금 기준 가장 최근 발표 시각을 구한다
+function getLatestBaseTime(now: Date): { base_date: string; base_time: string } {
   const hm = now.getHours() * 100 + now.getMinutes();
-  for (const t of slots) {
-    if (hm >= t + 10)
-      return { base_date: fmtDate(now), base_time: pad((t / 100) | 0) + "00" };
+  for (const hour of PUBLISH_HOURS) {
+    if (hm >= hour * 100 + PUBLISH_DELAY_MINUTES)
+      return {
+        base_date: formatDate(now),
+        base_time: padTwoDigits(hour) + "00",
+      };
   }
-  const prev = new Date(now);
-  prev.setDate(prev.getDate() - 1);
-  return { base_date: fmtDate(prev), base_time: "2300" };
+  const prevDay = new Date(now);
+  prevDay.setDate(prevDay.getDate() - 1);
+  return {
+    base_date: formatDate(prevDay),
+    base_time: padTwoDigits(PUBLISH_HOURS[0]) + "00",
+  };
 }
 
 export async function getWeather(): Promise<WeatherSummary> {
   const now = new Date();
-  const { base_date, base_time } = latestBase(now);
+  const { base_date, base_time } = getLatestBaseTime(now);
   const params = new URLSearchParams({
-    serviceKey: KEY,
+    serviceKey: DATA_GO_KR_API_KEY,
     dataType: "JSON",
     numOfRows: "1000",
     pageNo: "1",
@@ -59,29 +67,41 @@ export async function getWeather(): Promise<WeatherSummary> {
     ny: String(GRID.ny),
   });
 
-  const res = await fetch(`${ENDPOINT}?${params}`);
-  if (!res.ok) throw new Error(`날씨 조회 실패 (HTTP ${res.status})`);
+  const res = await fetch(`${WEATHER_API_ENDPOINT}?${params}`);
+  if (!res.ok)
+    throw new ApiError(`날씨 조회 실패 (HTTP ${res.status})`, `HTTP_${res.status}`);
   const json = await res.json();
-  if (json.response?.header?.resultCode !== SUCCESS_CODE) {
-    throw new Error(
+  const resultCode = json.response?.header?.resultCode;
+  if (resultCode !== SUCCESS_CODE) {
+    throw new ApiError(
       `날씨 조회 실패: ${json.response?.header?.resultMsg ?? "알 수 없음"}`,
+      resultCode ?? "UNKNOWN",
     );
   }
 
-  const items: FcstItem[] = json.response.body.items.item;
-  const today = fmtDate(now);
-  const todays = items.filter((i) => i.fcstDate === today);
-  const values = (cat: string) =>
-    todays.filter((i) => i.category === cat).map((i) => i.fcstValue);
+  const forecastItems: ForecastItem[] = json.response.body.items.item;
+  const today = formatDate(now);
+  const todaysForecastItems = forecastItems.filter(
+    (item) => item.fcstDate === today,
+  );
+  const valuesByCategory = (category: string) =>
+    todaysForecastItems
+      .filter((item) => item.category === category)
+      .map((item) => item.fcstValue);
 
-  const pops = values("POP").map(Number);
-  const ptys = values("PTY").filter((v) => v !== "0");
+  const precipitationProbabilities = valuesByCategory("POP").map(Number);
+  const precipitationTypeCodes = valuesByCategory("PTY").filter(
+    (v) => v !== "0",
+  );
+  const maxPrecipitationProbability = precipitationProbabilities.length
+    ? Math.max(...precipitationProbabilities)
+    : 0;
 
   return {
-    minTemp: values("TMN")[0] ?? "-",
-    maxTemp: values("TMX")[0] ?? "-",
-    pop: pops.length ? Math.max(...pops) : 0,
-    rain: ptys.length > 0,
-    needUmbrella: pops.length ? Math.max(...pops) >= UMBRELLA_POP : false,
+    minTemp: valuesByCategory("TMN")[0] ?? "-",
+    maxTemp: valuesByCategory("TMX")[0] ?? "-",
+    pop: maxPrecipitationProbability,
+    rain: precipitationTypeCodes.length > 0,
+    needUmbrella: maxPrecipitationProbability >= UMBRELLA_POP_THRESHOLD,
   };
 }

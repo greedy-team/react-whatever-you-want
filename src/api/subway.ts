@@ -1,18 +1,17 @@
-const KEY = import.meta.env.VITE_SEOUL_API_KEY;
-// http만 지원 (https 배포 시 막힘)
-const BASE = "http://swopenapi.seoul.go.kr/api/subway";
-// 정상 응답 코드
+import { SEOUL_API_KEY, SUBWAY_API_ENDPOINT } from "./constants";
+import { ApiError } from "./ApiError";
+
 const SUCCESS_CODE = "INFO-000";
 
 export interface Arrival {
-  line: string; // 호선 (subwayId)
+  lineId: string; // 호선 코드 (subwayId)
   direction: string; // 상행/하행/내선/외선
-  dest: string; // "성수행 - 역삼방면"
+  destination: string; // "성수행 - 역삼방면"
   message: string; // "전역 출발" 등 도착 안내
   seconds: number; // 도착까지 남은 초 (0이면 진입/도착)
 }
 
-interface RawArrival {
+interface SubwayArrivalItem {
   subwayId: string;
   updnLine: string;
   trainLineNm: string;
@@ -20,25 +19,28 @@ interface RawArrival {
   barvlDt: string;
 }
 
-// 지정 역의 실시간 도착 정보
 export async function getArrivals(station: string): Promise<Arrival[]> {
-  const url = `${BASE}/${KEY}/json/realtimeStationArrival/0/10/${encodeURIComponent(station)}`;
+  const url = `${SUBWAY_API_ENDPOINT}/${SEOUL_API_KEY}/json/realtimeStationArrival/0/10/${encodeURIComponent(station)}`;
   const res = await fetch(url);
-  if (!res.ok) throw new Error(`지하철 조회 실패 (HTTP ${res.status})`);
+  if (!res.ok)
+    throw new ApiError(`지하철 조회 실패 (HTTP ${res.status})`, `HTTP_${res.status}`);
   const json = await res.json();
 
-  // 성공해도 키 이름이 errorMessage라 code로 판별
+  // 성공해도 최상위 키 이름이 errorMessage라 안의 code로 판별해야 한다
   const code = json.errorMessage?.code;
   if (code && code !== SUCCESS_CODE) {
-    throw new Error(`지하철 조회 실패: ${json.errorMessage?.message ?? code}`);
+    throw new ApiError(
+      `지하철 조회 실패: ${json.errorMessage?.message ?? code}`,
+      code,
+    );
   }
 
-  const list: RawArrival[] = json.realtimeArrivalList ?? [];
-  return list.map((r) => ({
-    line: r.subwayId,
-    direction: r.updnLine,
-    dest: r.trainLineNm,
-    message: r.arvlMsg2,
-    seconds: Number(r.barvlDt),
+  const arrivalItems: SubwayArrivalItem[] = json.realtimeArrivalList ?? [];
+  return arrivalItems.map((item) => ({
+    lineId: item.subwayId,
+    direction: item.updnLine,
+    destination: item.trainLineNm,
+    message: item.arvlMsg2,
+    seconds: Number(item.barvlDt),
   }));
 }
