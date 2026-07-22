@@ -13,28 +13,32 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
-    errorElement: <ErrorPage />,
     children: [
       {
-        index: true,
-        element: <MainPage />,
-      },
-      {
-        path: "result/random",
-        element: <ResultPage />,
-        loader: async ({ request }) => {
-          const url = new URL(request.url);
-          const genre = url.searchParams.get("genre");
-          const era = url.searchParams.get("era");
+        errorElement: <ErrorPage />,
+        children: [
+          {
+            index: true,
+            element: <MainPage />,
+          },
+          {
+            path: "result/random",
+            element: <ResultPage />,
+            loader: async ({ request }) => {
+              const url = new URL(request.url);
+              const genre = url.searchParams.get("genre");
+              const era = url.searchParams.get("era");
 
-          await queryClient.ensureQueryData(movieQueryOptions(genre, era));
+              await queryClient.ensureQueryData(movieQueryOptions(genre, era));
 
-          return null;
-        },
-      },
-      {
-        path: "history",
-        element: <HistoryPage />,
+              return null;
+            },
+          },
+          {
+            path: "history",
+            element: <HistoryPage />,
+          },
+        ],
       },
     ],
   },
