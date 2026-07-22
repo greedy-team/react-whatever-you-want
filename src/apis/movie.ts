@@ -27,4 +27,5 @@ export const movieQueryOptions = (genre: string | null, era: string | null) =>
   queryOptions({
     queryKey: ["movieRandomDrop", genre, era],
     queryFn: () => fetchMovieData(genre, era),
+    staleTime: 1000 * 60,
   });
