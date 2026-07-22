@@ -79,7 +79,7 @@ export default function ResultPage() {
     <ResultContainer>
       <ResultCard>
         <Title>FlixDrop 드롭 결과</Title>
-        <InfoBlock>
+        <InfoBlock aria-live="polite">
           <HighlightText>
             {UI_GENRES.find((g) => g.key === genre)?.name || "전체"}
           </HighlightText>
