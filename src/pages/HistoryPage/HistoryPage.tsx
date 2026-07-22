@@ -29,7 +29,9 @@ export default function HistoryPage() {
       <Title>나의 FlixDrop 보관함</Title>
       <Subtitle>그동안 드롭으로 추천받았던 영화 목록입니다.</Subtitle>
       {movies.length === 0 ? (
-        <EmptyText>아직 보관함에 담긴 영화가 없습니다. 🍿</EmptyText>
+        <EmptyText>
+          아직 보관함에 담긴 영화가 없습니다. <span aria-hidden="true">🍿</span>
+        </EmptyText>
       ) : (
         <MovieList>
           {movies.map((movie) => (

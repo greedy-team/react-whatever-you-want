@@ -21,14 +21,26 @@ export default function ErrorPage() {
 
         <InfoBlock>
           <HighlightText>
-            {is404 ? "🔍 404 Page Not Found" : "⚠️ Application Error"}
+            {is404 ? (
+              <>
+                <span aria-hidden="true">🔍</span> 404 Page Not Found
+              </>
+            ) : (
+              <>
+                <span aria-hidden="true">⚠️</span> Application Error
+              </>
+            )}
           </HighlightText>
 
-          <InfoText>📅 에러 안내</InfoText>
+          <InfoText>
+            <span aria-hidden="true">📅</span> 에러 안내
+          </InfoText>
           <HighlightText>{errorMessage}</HighlightText>
 
           <MovieTitleSection>
-            <InfoText>🎬 상세 내용</InfoText>
+            <InfoText>
+              <span aria-hidden="true">🎬</span> 상세 내용
+            </InfoText>
             <MovieTitle>
               {error?.statusText || error?.message || "Unknown Error"}
             </MovieTitle>
@@ -39,7 +51,7 @@ export default function ErrorPage() {
           onClick={() => navigate("/")}
           aria-label="장르 및 시대 선택 화면인 홈으로 돌아가기"
         >
-          🏠 홈으로 돌아가기
+          <span aria-hidden="true">🏠</span> 홈으로 돌아가기
         </PrimaryButton>
       </ResultCard>
     </ResultContainer>

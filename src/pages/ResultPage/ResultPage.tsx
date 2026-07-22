@@ -84,12 +84,17 @@ export default function ResultPage() {
             {UI_GENRES.find((g) => g.key === genre)?.name || "전체"}
           </HighlightText>
 
-          <InfoText>📅 선택한 시대</InfoText>
+          <InfoText>
+            <span aria-hidden="true">📅</span> 선택한 시대
+          </InfoText>
           <HighlightText>
             {UI_ERAS.find((e) => e.key === era)?.name || "전체"}
           </HighlightText>
 
           <MovieTitleSection>
+            <InfoText>
+              <span aria-hidden="true">🎬</span> 오늘의 추천 영화
+            </InfoText>
             <InfoText>🎬 오늘의 추천 영화</InfoText>
             <MovieTitle>{movieTitle}</MovieTitle>
           </MovieTitleSection>
@@ -101,13 +106,13 @@ export default function ResultPage() {
               onClick={handleSaveToHistory}
               aria-label="추천된 영화를 보관함에 저장하기"
             >
-              🥳 보관함에 저장하기
+              <span aria-hidden="true">🥳</span> 보관함에 저장하기
             </PrimaryButton>
             <RepickButton
               onClick={handleRepick}
               aria-label="조건에 맞는 다른 영화 다시 추천받기"
             >
-              🔄 다른 영화 추천받기
+              <span aria-hidden="true">🔄</span> 다른 영화 추천받기
             </RepickButton>
           </>
         )}
@@ -116,7 +121,7 @@ export default function ResultPage() {
           onClick={() => navigate("/")}
           aria-label="장르 및 시대 필터 선택 화면으로 돌아가기"
         >
-          🔄 필터 다시 고르기
+          <span aria-hidden="true">🔄</span> 필터 다시 고르기
         </SecondaryButton>
       </ResultCard>
     </ResultContainer>

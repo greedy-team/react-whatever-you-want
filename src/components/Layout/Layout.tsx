@@ -53,7 +53,9 @@ export default function Layout() {
       {isLoading && (
         <LoadingOverlay>
           <Spinner />
-          <LoadingText>🍿 취향을 기반으로 영화 탐색 중...</LoadingText>
+          <LoadingText>
+            <span aria-hidden="true">🍿</span> 취향을 기반으로 영화 탐색 중...
+          </LoadingText>
         </LoadingOverlay>
       )}
       <Outlet />
