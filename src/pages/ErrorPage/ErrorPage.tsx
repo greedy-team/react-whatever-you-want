@@ -70,7 +70,7 @@ const ResultContainer = styled.main`
   justify-content: center;
 `;
 
-const ResultCard = styled.article`
+const ResultCard = styled.div`
   width: 100%;
   max-width: 450px;
   background-color: #000000;
