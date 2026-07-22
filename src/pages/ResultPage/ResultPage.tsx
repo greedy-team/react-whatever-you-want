@@ -117,10 +117,7 @@ export default function ResultPage() {
           </>
         )}
 
-        <SecondaryButton
-          onClick={() => navigate("/")}
-          aria-label="장르 및 시대 필터 선택 화면으로 돌아가기"
-        >
+        <SecondaryButton onClick={() => navigate("/")}>
           <span aria-hidden="true">🔄</span> 필터 다시 고르기
         </SecondaryButton>
       </ResultCard>
