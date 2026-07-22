@@ -53,7 +53,10 @@ export default function HistoryPage() {
                 </MovieMeta>
               </MovieInfo>
 
-              <DeleteButton onClick={() => handleDeleteMovie(movie.id)}>
+              <DeleteButton
+                onClick={() => handleDeleteMovie(movie.id)}
+                aria-label={`${movie.title} 보관함에서 지우기`}
+              >
                 지우기
               </DeleteButton>
             </MovieCard>
