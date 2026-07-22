@@ -25,20 +25,23 @@ export default function MainPage() {
       <Title>FlixDrop 영화 뽑기</Title>
       <form onSubmit={handleSubmit}>
         <SectionBlock as="section">
-          <p>
+          <p id="genre-group-label">
             <b>어떤 장르를 원하시나요?</b>
           </p>
-          {UI_GENRES.map((g) => (
-            <GenreButton
-              key={g.key}
-              type="button"
-              onClick={() => setGenre(g.key)}
-              $isActive={genre === g.key}
-              aria-pressed={genre === g.key}
-            >
-              {g.name}
-            </GenreButton>
-          ))}
+          <div role="radiogroup" aria-labelledby="genre-group-label">
+            {UI_GENRES.map((g) => (
+              <GenreButton
+                key={g.key}
+                type="button"
+                role="radio"
+                onClick={() => setGenre(g.key)}
+                $isActive={genre === g.key}
+                aria-checked={genre === g.key}
+              >
+                {g.name}
+              </GenreButton>
+            ))}
+          </div>
 
           <p>
             현재 선택된 장르:{" "}
