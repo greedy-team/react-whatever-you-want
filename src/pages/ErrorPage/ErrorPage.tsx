@@ -1,18 +1,25 @@
-import { useRouteError, useNavigate } from "react-router-dom";
+import {
+  useRouteError,
+  useNavigate,
+  isRouteErrorResponse,
+} from "react-router-dom";
 import styled from "styled-components";
 
 export default function ErrorPage() {
-  const error = useRouteError() as {
-    status?: number;
-    statusText?: string;
-    message?: string;
-  };
+  const error = useRouteError();
   const navigate = useNavigate();
 
-  const is404 = error?.status === 404;
+  const isRouteError = isRouteErrorResponse(error);
+  const is404 = isRouteError && error.status === 404;
   const errorMessage = is404
     ? "입력하신 주소가 잘못되었거나 존재하지 않는 페이지입니다."
     : "데이터를 불러오는 중 예기치 못한 문제가 발생했습니다.";
+
+  const errorDetail = isRouteError
+    ? error.statusText
+    : error instanceof Error
+      ? error.message
+      : "Unknown Error";
 
   return (
     <ResultContainer>
@@ -41,9 +48,7 @@ export default function ErrorPage() {
             <InfoText>
               <span aria-hidden="true">🎬</span> 상세 내용
             </InfoText>
-            <MovieTitle>
-              {error?.statusText || error?.message || "Unknown Error"}
-            </MovieTitle>
+            <MovieTitle>{errorDetail}</MovieTitle>
           </MovieTitleSection>
         </InfoBlock>
 
