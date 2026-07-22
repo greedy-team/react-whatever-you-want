@@ -32,11 +32,14 @@ export default function ResultPage() {
   const handleRepick = () => {
     if (movies.length <= 1) return;
 
-    let nextIndex = selectedIndex;
-    while (nextIndex === selectedIndex) {
-      nextIndex = Math.floor(Math.random() * movies.length);
+    let newIndex = selectedIndex;
+    while (
+      movies.length > 0 &&
+      Math.floor(newIndex % movies.length) === safeIndex
+    ) {
+      newIndex = Math.floor(Math.random() * movies.length);
     }
-    setSelectedIndex(nextIndex);
+    setSelectedIndex(newIndex);
   };
 
   const handleSaveToHistory = () => {
