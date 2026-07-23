@@ -2,6 +2,7 @@ import { getWeather } from "../src/api/weather";
 import { getAir, AIR_GRADE_LABEL } from "../src/api/air";
 import { getArrivals } from "../src/api/subway";
 import { getFavorite } from "../src/lib/favorites";
+import { buildSectionText, truncateMessage } from "./briefingMessage";
 
 const {
   KAKAO_REST_API_KEY,
@@ -9,15 +10,6 @@ const {
   KAKAO_REFRESH_TOKEN,
   STATION = getFavorite().departure,
 } = process.env;
-
-// 실패해도 나머지는 정상 발송 (섹션별 폴백)
-async function section(label: string, fn: () => Promise<string>) {
-  try {
-    return `${label} ${await fn()}`;
-  } catch {
-    return `${label} 조회 실패`;
-  }
-}
 
 async function getWeatherText() {
   const w = await getWeather();
@@ -51,7 +43,8 @@ async function refreshAccessToken() {
   });
 
   const json = await res.json();
-  if (!res.ok) throw new Error(`카카오 토큰 갱신 실패: ${JSON.stringify(json)}`);
+  if (!res.ok)
+    throw new Error(`카카오 토큰 갱신 실패: ${JSON.stringify(json)}`);
   return json.access_token as string;
 }
 
@@ -85,14 +78,14 @@ async function sendKakaoMessage(accessToken: string, text: string) {
 }
 
 const [weather, air, subway] = await Promise.all([
-  section("☔", getWeatherText),
-  section("😷", getAirText),
-  section(`🚇${STATION}`, getSubwayText),
+  buildSectionText("☔", getWeatherText),
+  buildSectionText("😷", getAirText),
+  buildSectionText(`🚇${STATION}`, getSubwayText),
 ]);
 
 // text 템플릿은 200자 제한이라 넘으면 잘라내고, 잘렸다는 걸 알 수 있도록 말줄임표를 붙인다
 const raw = `${weather}\n${air}\n${subway}`;
-const text = raw.length > 200 ? `${raw.slice(0, 197)}...` : raw;
+const text = truncateMessage(raw);
 
 const accessToken = await refreshAccessToken();
 const result = await sendKakaoMessage(accessToken, text);
