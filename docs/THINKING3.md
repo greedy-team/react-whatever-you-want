@@ -70,6 +70,7 @@
 | `expect`            | 실제 결과가 예상 결과와 일치하는지 검증한다.                |
 | `vi.fn`             | 실제 함수 대신 사용할 가짜 함수(mock)를 만든다.             |
 | `beforeEach`        | 각 테스트가 실행되기 전에 준비 작업을 수행한다.             |
+| `afterEach`         | 각 테스트가 끝난 뒤 가짜 시간 같은 테스트 환경을 복구한다.  |
 | `mockReset`         | 이전 테스트의 mock 응답과 호출 기록을 초기화한다.           |
 | `mockResolvedValue` | mock 함수가 반환할 Promise 결과를 지정한다.                 |
 | `fireEvent`         | 클릭이나 입력 같은 DOM 이벤트를 발생시킨다.                 |
@@ -94,5 +95,6 @@
 - `global.fetch = fetchMock`으로 테스트 중 호출되는 `fetch`를 가짜 함수로 교체한다.
 - `beforeEach()`와 `mockReset()`으로 각 테스트 전에 이전 테스트의 응답과 호출 기록을 지운다.
 - `mockResolvedValue()`로 해당 테스트에서 사용할 가짜 API 응답을 설정한다.
+- `afterEach()`는 테스트가 끝날 때마다 실행된다. 가짜 시간을 썼으면 `vi.useRealTimers()`로 원래 시간으로 돌려놓는다. 안 그러면 다음 테스트도 계속 가짜 시간을 쓴다.
 
 참고: [React에서 테스트 코드 작성해보기](https://velog.io/@wmc1415/React%EC%97%90%EC%84%9C-Test-%EC%BD%94%EB%93%9C-%EC%9E%91%EC%84%B1%ED%95%B4%EB%B3%B4%EA%B8%B0)
