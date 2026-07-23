@@ -60,7 +60,7 @@ export function SearchScreen() {
       setCurrentIndex((prev) => prev - 1);
     } else if (page > 1) {
       setPage((prev) => prev - 1);
-      setCurrentIndex(0);
+      setCurrentIndex(ROW_SIZE - 1);
     }
   }
 
