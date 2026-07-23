@@ -95,9 +95,9 @@ export function SearchScreen() {
         </select> */}
       </fieldset>
       <button onClick={handleSearch}>찾아보기</button>
+      {isFetching && <p>불러오는중..</p>}
 
       <ShortsResult
-        isFetching={isFetching}
         error={error}
         searched={searched}
         current={current}
