@@ -40,10 +40,10 @@
 
 - 공기, 에러구문, 지하철, 지하철 역정보, 날씨
 
-`src/api/*`는 fetch로 외부 API를 직접 부르고, 응답 JSON을 우리 타입(`WeatherSummary`, `AirSummary` 등)으로 재조립하는 게 핵심 로직이다. 실제 API를 매번 호출하면서 확인할 순 없으니, 실제 응답 형태를 흉내 낸 fixture로 fetch를 흉내 내서:
+`src/api/*`는 fetch로 외부 API를 호출하고, 응답 JSON을 우리 타입(`WeatherSummary`, `AirSummary` 등)으로 재조립하는 게 핵심 로직이다. 실제 API를 매번 호출하면서 확인할 순 없으니, 실제 응답 형태를 흉내 낸 가짜 응답 데이터로 fetch를 대체해서:
 
 - 정상 응답이 왔을 때 값이 우리가 기대한 필드로 제대로 매핑되는지 (`weather.ts`의 시간별 응답 재조립, `air.ts`의 등급→마스크 필요 여부 판단)
-- 실패 응답(HTTP 에러, `resultCode !== "00"`, 지하철의 `errorMessage.code`가 `INFO-000`이 아닌 경우 등)일 때 `ApiError`로 제대로 던지는지
+- API가 실패 코드(`resultCode !== "00"`, 지하철의 `errorMessage.code`가 `INFO-000`이 아닌 경우 등)를 반환했을 때 weather, air, subway는 `ApiError`를 던지고 subwayStations는 `Error`를 던지는지
 
 두 가지를 확인하는 게 목적. 사용자 관점에서는 "화면에 값이 제대로 뜨는지 / 실패하면 에러가 제대로 보이는지"와 같은 말이라, 요구사항 2번(사용자 관점 검증)과도 맞닿아 있다.
 
@@ -78,10 +78,22 @@
 | `afterEach`         | 각 테스트가 끝난 뒤 가짜 시간 같은 테스트 환경을 복구한다.  |
 | `mockReset`         | 이전 테스트의 mock 응답과 호출 기록을 초기화한다.           |
 | `mockResolvedValue` | mock 함수가 반환할 Promise 결과를 지정한다.                 |
-| `fireEvent`         | 클릭이나 입력 같은 DOM 이벤트를 발생시킨다.                 |
-| `getByText`         | 지정한 텍스트를 가진 DOM 요소를 찾는다.                     |
+| `userEvent`         | 실제 사용자처럼 입력하거나 클릭한다.                        |
+| `getByRole`         | 현재 화면에서 역할에 해당하는 요소를 찾는다.                |
+| `findByRole`        | 비동기 작업 후 나타나는 요소를 기다려서 찾는다.             |
+| `queryByRole`       | 요소가 없으면 실패하지 않고 `null`을 반환한다.              |
 
 ### 기본 테스트 구조
+
+```ts
+describe("테스트 대상", () => {
+  it("검증할 동작", async () => {
+    const result = await 테스트대상();
+
+    expect(result).toBe("기대값");
+  });
+});
+```
 
 ## 테스트 팁
 
@@ -101,6 +113,8 @@
 - `beforeEach()`와 `mockReset()`으로 각 테스트 전에 이전 테스트의 응답과 호출 기록을 지운다.
 - `mockResolvedValue()`로 해당 테스트에서 사용할 가짜 API 응답을 설정한다.
 - `afterEach()`는 테스트가 끝날 때마다 실행된다. 가짜 시간을 썼으면 `vi.useRealTimers()`로 원래 시간으로 돌려놓는다. 안 그러면 다음 테스트도 계속 가짜 시간을 쓴다.
+- `userEvent`는 입력할 때 focus, keydown, keyup 같은 관련 이벤트도 사용자 행동과 비슷하게 발생시킨다.
+- 화면 요소는 사용자가 인식하는 역할을 기준으로 `getByRole()`을 사용해 찾는다.
 
 # RESULT
 
@@ -130,4 +144,8 @@ npm run test -- --coverage
 
 `StationCombobox`의 방향키 이동, Escape, blur 같은 부가 동작은 이번 요구사항의 핵심인 입력 → 필터링 → 선택 흐름에 집중하기 위해 제외했다.
 
-참고: [React에서 테스트 코드 작성해보기](https://velog.io/@wmc1415/React%EC%97%90%EC%84%9C-Test-%EC%BD%94%EB%93%9C-%EC%9E%91%EC%84%B1%ED%95%B4%EB%B3%B4%EA%B8%B0)
+## 관련 참고
+
+- [React에서 테스트 코드 작성해보기](https://velog.io/@wmc1415/React%EC%97%90%EC%84%9C-Test-%EC%BD%94%EB%93%9C-%EC%9E%91%EC%84%B1%ED%95%B4%EB%B3%B4%EA%B8%B0)
+- [React 테스트 코드에서 유저 이벤트 발생시키기](https://cheeseb.github.io/testing/react-testing-user-event/)
+- [React Testing Tutorial(5) - getByRole, getByRole option](https://baekspace.tistory.com/269)
