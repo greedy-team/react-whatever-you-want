@@ -1,19 +1,6 @@
-import { fetchMissingPersons } from "../../hooks/missingPersons";
+import { fetchMissingPersons } from "../../api/missingPersons";
 import { useQuery } from "@tanstack/react-query";
-
-function getTargetLabel(code: string) {
-  const map: Record<string, string> = {
-    "010": "정상아동(18세미만)",
-    "020": "가출인",
-    "040": "시설보호무연고자",
-    "060": "지적장애인",
-    "061": "지적장애인(18세미만)",
-    "062": "지적장애인(18세이상)",
-    "070": "치매질환자",
-    "080": "불상(기타)",
-  };
-  return map[code] || code;
-}
+import { MissingPersonProfile } from "../../components/MissingPersonProfile";
 
 export function ListScreen() {
   const { data, isLoading, error } = useQuery({
@@ -42,26 +29,7 @@ export function ListScreen() {
               marginBottom: "8px",
             }}
           >
-            {person.tknphotoFile && (
-              <img
-                src={`data:image/jpeg;base64,${person.tknphotoFile}`}
-                alt={person.nm}
-                style={{ maxWidth: "100%", height: "auto" }}
-              />
-            )}
-            <p>
-              <strong>{person.nm}</strong>
-            </p>
-            <p>
-              성별: {person.sexdstnDscd} / 당시나이: {person.age}세 / 현재나이:{" "}
-              {person.ageNow}세
-            </p>
-            <p>신체특징: {person.etcSpfeatr || "정보 없음"}</p>
-            <p>발생일: {person.occrde}</p>
-            <p>발생장소: {person.occrAdres}</p>
-
-            <p>착의사항: {person.alldressingDscd || "정보 없음"}</p>
-            <p>대상구분: {getTargetLabel(person.writngTrgetDscd)}</p>
+            <MissingPersonProfile person={person}></MissingPersonProfile>
           </li>
         ))}
       </ul>
