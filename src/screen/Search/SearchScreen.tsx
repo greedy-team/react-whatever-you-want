@@ -31,7 +31,7 @@ export function SearchScreen() {
   const [gender, setGender] = useState<string>("none");
   const [age, setAge] = useState<string>("none");
   const [page, setPage] = useState(1);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(-1);
   const [searched, setSearched] = useState(false);
 
   const { data, isFetching, error } = useQuery({
@@ -108,6 +108,11 @@ export function SearchScreen() {
         onPrev={handlePrev}
         onNext={handleNext}
       />
+      {currentIndex !==-1 && (
+        <span>
+          {currentIndex + 1 + (page - 1) * 10}/{page * 10}
+        </span>
+      )}
     </div>
   );
 }
