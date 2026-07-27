@@ -110,7 +110,7 @@ export function SearchScreen() {
       />
       {currentIndex !==-1 && (
         <span>
-          {currentIndex + 1 + (page - 1) * 10}/{page * 10}
+          {(currentIndex + 1) + (page - 1) * 10}/{page * 10}
         </span>
       )}
     </div>
