@@ -22,6 +22,12 @@ function renderWithQueryClient(ui: React.ReactElement) {
   );
 }
 
+async function clickAndExpectText(button: string, text: string) {
+  const user = userEvent.setup();
+  await user.click(screen.getByRole("button", { name: button }));
+  expect(await screen.findByText(text)).toBeInTheDocument();
+}
+
 describe("SearchScreen", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -118,31 +124,16 @@ describe("SearchScreen", () => {
         exhausted: true,
       });
       renderWithQueryClient(<SearchScreen />);
-
       await user.click(screen.getByRole("button", { name: "찾아보기" }));
       await screen.findByText(mockMalePersons[0].nm);
-      for (let i = 0; i < 5; i++) {
+      
+      for (let i = 0; i < 4; i++) {
         await user.click(screen.getByRole("button", { name: "▼ 다음" }));
       }
-      expect(
-        await screen.findByText(mockMalePersons[5].nm),
-      ).toBeInTheDocument();
-      await user.click(screen.getByRole("button", { name: "▲ 이전" }));
-      expect(
-        await screen.findByText(mockMalePersons[4].nm),
-      ).toBeInTheDocument();
-      await user.click(screen.getByRole("button", { name: "▲ 이전" }));
-      expect(
-        await screen.findByText(mockMalePersons[3].nm),
-      ).toBeInTheDocument();
-      await user.click(screen.getByRole("button", { name: "▲ 이전" }));
-      expect(
-        await screen.findByText(mockMalePersons[2].nm),
-      ).toBeInTheDocument();
-      await user.click(screen.getByRole("button", { name: "▲ 이전" }));
-      expect(
-        await screen.findByText(mockMalePersons[1].nm),
-      ).toBeInTheDocument();
+      clickAndExpectText("▼ 다음", mockMalePersons[5].nm);
+      for (let i = 4; i >= 1; i--) {
+        clickAndExpectText("▲ 이전", mockMalePersons[i].nm);
+      }
     });
     it("페이지 경계를 넘어 이전으로 가면 이전 페이지의 마지막 사람이 뜬다", async () => {
       const user = userEvent.setup();
