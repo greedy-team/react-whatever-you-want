@@ -1,0 +1,26 @@
+name: Send morning briefing
+
+on:
+  schedule:
+    - cron: "0 22 * * *" # 매일 KST 07:00 (main에 머지된 뒤부터 동작)
+  workflow_dispatch: {} # 수동 실행(main에 머지된 뒤부터 Actions 탭에 노출)
+  push:
+    branches: [main, step_02] # 브랜치 push 시 바로 테스트 가능. 워크플로 파일은 push한 브랜치 버전을 그대로 읽는다.
+    paths:
+      - "scripts/send-briefing.ts"
+      - ".github/workflows/briefing.yml"
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm ci
+      - name: Write .env
+        env:
+          ENV_FILE: ${{ secrets.ENV }}
+        run: printf '%s\n' "$ENV_FILE" > .env
+      - run: npx tsx --env-file=.env scripts/send-briefing.ts
