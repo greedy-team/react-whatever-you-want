@@ -7,10 +7,10 @@ const GRID = { nx: 62, ny: 126 };
 const SUCCESS_CODE = "00";
 const UMBRELLA_POP_THRESHOLD = 50;
 
-// 기상청 단기예보 발표 시각 (하루 8회, 3시간 간격) — 최신 순
-const PUBLISH_HOURS = [23, 20, 17, 14, 11, 8, 5, 2];
-// 발표 후 API에 실제로 반영되기까지의 지연 시간 (분)
-const PUBLISH_DELAY_MINUTES = 10;
+const DAY_MS = 24 * 60 * 60 * 1000;
+// 오늘의 TMN(최저기온)은 어제 2300 회차와 오늘 0200 회차에만 실린다.
+// 그중 하루 종일 쓸 수 있는 어제 2300 회차로 고정한다.
+const BASE_TIME = "2300";
 
 export interface WeatherSummary {
   minTemp: string; // 최저기온 (℃)
@@ -27,49 +27,33 @@ interface ForecastItem {
   fcstValue: string; // 예보 값
 }
 
-function padTwoDigits(n: number): string {
-  return String(n).padStart(2, "0");
-}
-
-function formatDate(d: Date): string {
-  return `${d.getFullYear()}${padTwoDigits(d.getMonth() + 1)}${padTwoDigits(d.getDate())}`;
-}
-
-// 기상청 API는 base_date/base_time으로 발표 회차를 지정해야 해서, 지금 기준 가장 최근 발표 시각을 구한다
-function getLatestBaseTime(now: Date): { base_date: string; base_time: string } {
-  const hm = now.getHours() * 100 + now.getMinutes();
-  for (const hour of PUBLISH_HOURS) {
-    if (hm >= hour * 100 + PUBLISH_DELAY_MINUTES)
-      return {
-        base_date: formatDate(now),
-        base_time: padTwoDigits(hour) + "00",
-      };
-  }
-  const prevDay = new Date(now);
-  prevDay.setDate(prevDay.getDate() - 1);
-  return {
-    base_date: formatDate(prevDay),
-    base_time: padTwoDigits(PUBLISH_HOURS[0]) + "00",
-  };
+// 기상청은 KST 기준이라 실행 환경 타임존(Actions 러너는 UTC)과 무관하게 서울 날짜를 읽는다.
+// sv-SE 로케일이 YYYY-MM-DD로 포맷해줘서 하이픈만 빼면 기상청 형식이 된다.
+function seoulDate(d: Date): string {
+  return d
+    .toLocaleDateString("sv-SE", { timeZone: "Asia/Seoul" })
+    .replaceAll("-", "");
 }
 
 export async function getWeather(): Promise<WeatherSummary> {
   const now = new Date();
-  const { base_date, base_time } = getLatestBaseTime(now);
   const params = new URLSearchParams({
     serviceKey: DATA_GO_KR_API_KEY,
     dataType: "JSON",
     numOfRows: "1000",
     pageNo: "1",
-    base_date,
-    base_time,
+    base_date: seoulDate(new Date(now.getTime() - DAY_MS)),
+    base_time: BASE_TIME,
     nx: String(GRID.nx),
     ny: String(GRID.ny),
   });
 
   const res = await fetch(`${WEATHER_API_ENDPOINT}?${params}`);
   if (!res.ok)
-    throw new ApiError(`날씨 조회 실패 (HTTP ${res.status})`, `HTTP_${res.status}`);
+    throw new ApiError(
+      `날씨 조회 실패 (HTTP ${res.status})`,
+      `HTTP_${res.status}`,
+    );
   const json = await res.json();
   const resultCode = json.response?.header?.resultCode;
   if (resultCode !== SUCCESS_CODE) {
@@ -80,7 +64,7 @@ export async function getWeather(): Promise<WeatherSummary> {
   }
 
   const forecastItems: ForecastItem[] = json.response.body.items.item;
-  const today = formatDate(now);
+  const today = seoulDate(now);
   const todaysForecastItems = forecastItems.filter(
     (item) => item.fcstDate === today,
   );

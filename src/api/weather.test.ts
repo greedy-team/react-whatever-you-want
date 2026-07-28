@@ -38,6 +38,40 @@ describe("getWeather", () => {
     });
   });
 
+  it("UTC 러너에서 돌려도 KST 기준 날짜와 최저기온이 있는 회차로 조회한다", async () => {
+    // Actions 크론(0 22 * * *)이 시작 할 때 = KST 2026-07-26 07:00
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-07-25T22:00:00Z"));
+
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        response: {
+          header: { resultCode: "00" },
+          body: {
+            items: {
+              item: [
+                { category: "TMN", fcstDate: "20260725", fcstValue: "22" },
+                { category: "TMN", fcstDate: "20260726", fcstValue: "26" },
+                { category: "TMX", fcstDate: "20260726", fcstValue: "32" },
+              ],
+            },
+          },
+        },
+      }),
+    } as Response);
+    global.fetch = fetchMock;
+
+    const weather = await getWeather();
+
+    const params = new URL(fetchMock.mock.calls[0][0]).searchParams;
+    // 0500 이후 회차엔 TMN이 없어서, 최신 회차가 아니라 어제 2300 회차로 조회해야 한다
+    expect(params.get("base_date")).toBe("20260725");
+    expect(params.get("base_time")).toBe("2300");
+    expect(weather.minTemp).toBe("26");
+    expect(weather.maxTemp).toBe("32");
+  });
+
   it("API가 실패 코드를 반환하면 ApiError를 던진다", async () => {
     global.fetch = vi.fn().mockResolvedValue({
       ok: true,
