@@ -12,22 +12,24 @@ function StationNameplate({ station }: { station: Station }) {
 
   return (
     <div className="nameplate">
-      <div className="nameplate-bar" style={{ backgroundColor: color }} />
+      <div className="nameplate-bar" style={{ backgroundColor: color }} aria-hidden="true" />
       <div className="nameplate-pill" style={{ borderColor: color }}>
         <div
           className={numbered ? "nameplate-badge" : "nameplate-badge named"}
           style={{ backgroundColor: color }}
         >
           {lineBadge(station.line)}
+          {numbered && <span className="sr-only">호선</span>}
         </div>
         <div className="nameplate-text">
           <div className="nameplate-name">{station.name}</div>
+          {/* 다국어 역명: lang을 명시해 스크린리더가 올바른 발음으로 읽도록, 구분선은 장식 처리 */}
           <div className="nameplate-sub">
-            <span>{station.nameEng}</span>
-            <span className="sep">|</span>
-            <span>{station.nameChn}</span>
-            <span className="sep">|</span>
-            <span>{station.nameJpn}</span>
+            <span lang="en">{station.nameEng}</span>
+            <span className="sep" aria-hidden="true">|</span>
+            <span lang="zh">{station.nameChn}</span>
+            <span className="sep" aria-hidden="true">|</span>
+            <span lang="ja">{station.nameJpn}</span>
           </div>
         </div>
       </div>
