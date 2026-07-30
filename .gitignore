@@ -10,7 +10,12 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+coverage
 *.local
+
+# 개인 작업 계획 문서
+PLAN.md
+plan.md
 
 # Editor directories and files
 .vscode/*
