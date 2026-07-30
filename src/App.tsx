@@ -38,6 +38,10 @@ const router = createBrowserRouter([
             path: "history",
             element: <HistoryPage />,
           },
+          {
+            path: "*",
+            element: <ErrorPage />,
+          },
         ],
       },
     ],
