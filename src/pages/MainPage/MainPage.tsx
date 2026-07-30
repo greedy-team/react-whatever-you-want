@@ -28,20 +28,23 @@ export default function MainPage() {
           <p id="genre-group-label">
             <b>어떤 장르를 원하시나요?</b>
           </p>
-          <div role="radiogroup" aria-labelledby="genre-group-label">
+          <GenreRadioGroup
+            role="radiogroup"
+            aria-labelledby="genre-group-label"
+          >
             {UI_GENRES.map((g) => (
-              <GenreButton
-                key={g.key}
-                type="button"
-                role="radio"
-                onClick={() => setGenre(g.key)}
-                $isActive={genre === g.key}
-                aria-checked={genre === g.key}
-              >
+              <GenreLabel key={g.key} $isActive={genre === g.key}>
+                <VisuallyHiddenInput
+                  type="radio"
+                  name="genre"
+                  value={g.key}
+                  checked={genre === g.key}
+                  onChange={() => setGenre(g.key)}
+                />
                 {g.name}
-              </GenreButton>
+              </GenreLabel>
             ))}
-          </div>
+          </GenreRadioGroup>
 
           <p>
             현재 선택된 장르:{" "}
@@ -110,7 +113,14 @@ const StyledLabel = styled.label`
   margin-bottom: 12px;
 `;
 
-const GenreButton = styled.button<{ $isActive: boolean }>`
+const GenreRadioGroup = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+`;
+
+const GenreLabel = styled.label<{ $isActive: boolean }>`
   background-color: ${(props) => (props.$isActive ? "#e50914" : "#2f2f2f")};
   color: #ffffff;
   border: 1px solid ${(props) => (props.$isActive ? "#e50914" : "#3f3f3f")};
@@ -125,6 +135,22 @@ const GenreButton = styled.button<{ $isActive: boolean }>`
   &:hover {
     background-color: ${(props) => (props.$isActive ? "#b80710" : "#3f3f3f")};
   }
+  &:focus-within {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+  }
+`;
+
+const VisuallyHiddenInput = styled.input`
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 `;
 
 const StyledSelect = styled.select`
