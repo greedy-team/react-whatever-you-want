@@ -33,10 +33,7 @@ export default function ResultPage() {
     if (movies.length <= 1) return;
 
     let newIndex = selectedIndex;
-    while (
-      movies.length > 0 &&
-      Math.floor(newIndex % movies.length) === safeIndex
-    ) {
+    while (newIndex % movies.length === safeIndex) {
       newIndex = Math.floor(Math.random() * movies.length);
     }
     setSelectedIndex(newIndex);
@@ -98,7 +95,6 @@ export default function ResultPage() {
             <InfoText>
               <span aria-hidden="true">🎬</span> 오늘의 추천 영화
             </InfoText>
-            <InfoText>🎬 오늘의 추천 영화</InfoText>
             <MovieTitle>{movieTitle}</MovieTitle>
           </MovieTitleSection>
         </InfoBlock>
