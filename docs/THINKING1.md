@@ -8,9 +8,14 @@
 - **API를 활용해 데이터를 조회**하고 화면에 렌더링하세요.
 - 페이지 전환 시 **전체 페이지 새로고침이 발생하지 않아야** 합니다.
 
-  https://reactrouter.com/
-
-  https://ts.winterlood.com/
+- [React Router 공식 문서](https://reactrouter.com/)
+- [한 입 크기로 잘라먹는 타입스크립트](https://ts.winterlood.com/)
+- [기상청 단기예보 조회서비스](https://www.data.go.kr/data/15084084/openapi.do)
+- [에어코리아 대기오염정보](https://www.data.go.kr/data/15073861/openapi.do)
+- [서울 지하철 실시간 도착정보](https://data.seoul.go.kr/dataList/OA-12764/A/1/datasetView.do)
+- [카카오 디벨로퍼스](https://developers.kakao.com/)
+- [카카오톡 메시지 API - 나에게 보내기(기본 템플릿)](https://developers.kakao.com/docs/ko/kakaotalk-message/rest-api#default-template-msg-me)
+- [카카오톡 메시지 API - 공통 개요](https://developers.kakao.com/docs/ko/kakaotalk-message/common#kakaotalk)
 
 # WHAT?
 
@@ -20,7 +25,28 @@
 
 주소를 보고 화면을 정하게 만들자 -> React Router.
 
-### main.tsx에서 `<BrowserRouter>`로 감싸고, App.tsx는 경로만 적는다
+### 처음엔 `<BrowserRouter>` + `<Routes>`(선언적 모드)로 시작, 지금은 `createBrowserRouter`(데이터 모드)
+
+선언적 모드는 JSX 트리로 라우트를 적고, 렌더링은 라우터가 하지만 데이터 요청은 각 페이지 컴포넌트(`useEffect`)가 알아서 한다.
+
+데이터 모드는 라우트를 배열/객체로 정의하고, `loader`를 붙이면 라우터가 렌더링과 데이터 요청을 같이 담당한다. 지금 프로젝트는 `useEffect`로 불러오는 방식을 그대로 쓰고 있어서 `loader`의 이점을 아직 못 쓰고 있지만, 나중에 라우트 전환 전에 데이터를 미리 불러오거나(prefetch) 로딩/에러 상태를 라우터가 관리하게 바꾸려면 지금 구조가 더 유리해서 미리 옮겨뒀다.
+
+```tsx
+// main.tsx
+const router = createBrowserRouter([
+  {
+    element: <App />,
+    children: [
+      { index: true, element: <Briefing /> },
+      { path: "favorites", element: <Favorites /> },
+    ],
+  },
+]);
+
+createRoot(document.getElementById("root")!).render(
+  <RouterProvider router={router} />,
+);
+```
 
 # WHERE?
 
@@ -28,7 +54,9 @@
 
 네비게이션은 모든 페이지에 나온다 -> 페이지마다 각자 그리면 페이지 추가할 때 빠뜨린다 -> **컴포넌트로 분리**해서 한 군데서만 그리자.
 
-Layout 컴포넌트를 만들고 페이지들을 그 안에 넣는다. React Router에서는 `<Outlet />`이 "여기에 자식 페이지가 들어온다"는 자리다.
+처음엔 `App`(라우트 최상위, Provider 자리)과 `Layout`(네비게이션 바 + `<Outlet />`)을 따로 뒀다. 근데 지금은 레이아웃이 하나뿐이라 `App`이 아무것도 안 하고 `Layout`을 감싸기만 하는 빈 껍데기였다. `Layout.tsx`를 지우고 그 안 내용을 `App.tsx`로 합쳤다. React Router에서는 `<Outlet />`이 "여기에 자식 페이지가 들어온다"는 자리다.
+
+나중에 전역 Provider(테마, 에러 바운더리 등)가 필요해지면 그때 `App`을 다시 라우트 최상위 껍데기로 분리하면 된다.
 
 ## 페이지를 어떻게 나눌까
 
@@ -69,17 +97,17 @@ API가 3개니까 페이지도 3개(날씨/미세먼지/지하철)로 나눌 수
 
 # HOW?
 
-### `src/pages/*`에 페이지, `src/components/*`에 공용 컴포넌트, `src/api/*`에 API 호출
+### `src/pages/*`에 페이지, `src/api/*`에 API 호출
 
 ```
 src/
-├── main.tsx                 <BrowserRouter>로 감쌈
-├── App.tsx                  경로 목록
-├── components/Layout.tsx    네비게이션 바 + <Outlet />
+├── main.tsx                 createBrowserRouter + <RouterProvider>
+├── App.tsx                  네비게이션 바 + <Outlet />
 ├── api/
+│   ├── constants.ts         엔드포인트/키 상수
 │   ├── weather.ts           기상청 단기예보
-│   ├── air.ts               에어코리아 미세먼지
-│   └── subway.ts            서울 지하철 실시간
+│   ├── air.ts                에어코리아 미세먼지
+│   └── subway.ts             서울 지하철 실시간
 ├── lib/favorites.ts         출발역 저장 (localStorage)
 └── pages/
     ├── Briefing.tsx         /           날씨 + 미세먼지 + 지하철
@@ -89,19 +117,26 @@ src/
 ## 경로 목록
 
 ```tsx
-<Routes>
-  <Route element={<Layout />}>
-    <Route index element={<Briefing />} />
-    <Route path="favorites" element={<Favorites />} />
-  </Route>
-</Routes>
+const router = createBrowserRouter([
+  {
+    element: <App />,
+    children: [
+      { index: true, element: <Briefing /> },
+      { path: "favorites", element: <Favorites /> },
+    ],
+  },
+]);
 ```
 
-Layout에는 주소를 안 줬다. 화면을 감싸기만 하고 주소는 차지하지 않는다.
+App에는 주소를 안 줬다. 화면을 감싸기만 하고 주소는 차지하지 않는다.
 
-## Layout
+## App
 
 `<div>` 말고 `<header>`, `<nav>`, `<main>`을 썼다. 화면은 똑같지만 뭐가 뭔지 드러난다.
+
+## API 상수
+
+`api/constants.ts`에 각 API의 엔드포인트와 인증키(`import.meta.env`)를 모아뒀다. `weather.ts`/`air.ts`/`subway.ts`가 여기서 값을 가져다 쓴다. URL을 파일마다 하드코딩하면 도메인이 바뀌거나 키 이름을 바꿀 때 여러 파일을 다 고쳐야 해서, 한 군데로 모았다.
 
 ## 데이터 불러오기
 
