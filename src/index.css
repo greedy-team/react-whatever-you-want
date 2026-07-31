@@ -1,0 +1,10 @@
+/* 스타일을 역할별 파일로 분리해 불러옵니다.
+   - base: 전역·공용(리셋, body, .screen, .navbar, .metro-btn, 애니메이션)
+   - 나머지: 화면/컴포넌트별 스타일 */
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Noto+Sans+KR:wght@400;700;900&display=swap");
+@import "./styles/base.css";
+@import "./styles/home.css";
+@import "./styles/nameplate.css";
+@import "./styles/play.css";
+@import "./styles/result.css";
+@import "./styles/stations.css";
