@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { fetchMovieData } from "../../apis/movie";
 import styled from "styled-components";
 import { UI_GENRES, UI_ERAS } from "../../constants/movieFilters";
-import type { Movie, TMDBResponse } from "../../types/movie";
+import type { Movie } from "../../types/movie";
 import { STORAGE_KEYS } from "../../constants/storage";
+import { movieQueryOptions } from "../../apis/movie";
 
 export default function ResultPage() {
   const navigate = useNavigate();
@@ -14,9 +14,8 @@ export default function ResultPage() {
   const genre = searchParams.get("genre");
   const era = searchParams.get("era");
 
-  const { isPending, data: movieData } = useQuery({
-    queryKey: ["movieRandomDrop", genre, era],
-    queryFn: () => fetchMovieData(genre, era),
+  const { data: movieData } = useQuery({
+    ...movieQueryOptions(genre, era),
     throwOnError: true,
   });
 
@@ -33,11 +32,11 @@ export default function ResultPage() {
   const handleRepick = () => {
     if (movies.length <= 1) return;
 
-    let nextIndex = selectedIndex;
-    while (nextIndex === selectedIndex) {
-      nextIndex = Math.floor(Math.random() * movies.length);
+    let newIndex = selectedIndex;
+    while (newIndex % movies.length === safeIndex) {
+      newIndex = Math.floor(Math.random() * movies.length);
     }
-    setSelectedIndex(nextIndex);
+    setSelectedIndex(newIndex);
   };
 
   const handleSaveToHistory = () => {
@@ -73,14 +72,6 @@ export default function ResultPage() {
     alert("보관함에 성공적으로 저장되었습니다!");
   };
 
-  if (isPending) {
-    return (
-      <ResultContainer>
-        <MessageText>🍿 취향을 기반으로 영화 탐색 중...</MessageText>
-      </ResultContainer>
-    );
-  }
-
   const movieTitle =
     randomMovie?.title || `선택하신 조건에 맞는 추천 영화가 없습니다.`;
 
@@ -88,35 +79,45 @@ export default function ResultPage() {
     <ResultContainer>
       <ResultCard>
         <Title>FlixDrop 드롭 결과</Title>
-        <InfoBlock>
+        <InfoBlock aria-live="polite">
           <HighlightText>
             {UI_GENRES.find((g) => g.key === genre)?.name || "전체"}
           </HighlightText>
 
-          <InfoText>📅 선택한 시대</InfoText>
+          <InfoText>
+            <span aria-hidden="true">📅</span> 선택한 시대
+          </InfoText>
           <HighlightText>
             {UI_ERAS.find((e) => e.key === era)?.name || "전체"}
           </HighlightText>
 
           <MovieTitleSection>
-            <InfoText>🎬 오늘의 추천 영화</InfoText>
+            <InfoText>
+              <span aria-hidden="true">🎬</span> 오늘의 추천 영화
+            </InfoText>
             <MovieTitle>{movieTitle}</MovieTitle>
           </MovieTitleSection>
         </InfoBlock>
 
         {randomMovie && (
           <>
-            <PrimaryButton onClick={handleSaveToHistory}>
-              🥳 보관함에 저장하기
+            <PrimaryButton
+              onClick={handleSaveToHistory}
+              aria-label="추천된 영화를 보관함에 저장하기"
+            >
+              <span aria-hidden="true">🥳</span> 보관함에 저장하기
             </PrimaryButton>
-            <RepickButton onClick={handleRepick}>
-              🔄 다른 영화 추천받기
+            <RepickButton
+              onClick={handleRepick}
+              aria-label="조건에 맞는 다른 영화 다시 추천받기"
+            >
+              <span aria-hidden="true">🔄</span> 다른 영화 추천받기
             </RepickButton>
           </>
         )}
 
         <SecondaryButton onClick={() => navigate("/")}>
-          🔄 필터 다시 고르기
+          <span aria-hidden="true">🔄</span> 필터 다시 고르기
         </SecondaryButton>
       </ResultCard>
     </ResultContainer>
@@ -154,7 +155,7 @@ const ResultContainer = styled.main`
   justify-content: center;
 `;
 
-const ResultCard = styled.div`
+const ResultCard = styled.article`
   width: 100%;
   max-width: 450px;
   background-color: #000000;
@@ -209,13 +210,6 @@ const MovieTitle = styled.h3`
   color: #ffb800;
   margin: 6px 0 0 0;
   line-height: 1.4;
-`;
-
-const MessageText = styled.h2`
-  font-size: 20px;
-  color: #ffffff;
-  font-weight: 500;
-  margin-bottom: 20px;
 `;
 
 const PrimaryButton = styled.button`

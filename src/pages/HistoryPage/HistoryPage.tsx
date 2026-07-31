@@ -29,7 +29,9 @@ export default function HistoryPage() {
       <Title>나의 FlixDrop 보관함</Title>
       <Subtitle>그동안 드롭으로 추천받았던 영화 목록입니다.</Subtitle>
       {movies.length === 0 ? (
-        <EmptyText>아직 보관함에 담긴 영화가 없습니다. 🍿</EmptyText>
+        <EmptyText>
+          아직 보관함에 담긴 영화가 없습니다. <span aria-hidden="true">🍿</span>
+        </EmptyText>
       ) : (
         <MovieList>
           {movies.map((movie) => (
@@ -37,21 +39,24 @@ export default function HistoryPage() {
               <MovieInfo>
                 <MovieTitle>{movie.title}</MovieTitle>
                 <MovieMeta>
+                  <span aria-hidden="true">🎭</span>{" "}
                   <span>
-                    🎭{" "}
                     {UI_GENRES.find((g) => g.key === movie.genre)?.name ||
                       movie.genre}
                   </span>
                   <span> • </span>
+                  <span aria-hidden="true">📅</span>{" "}
                   <span>
-                    📅{" "}
                     {UI_ERAS.find((e) => e.key === movie.era)?.name ||
                       movie.era}
                   </span>
                 </MovieMeta>
               </MovieInfo>
 
-              <DeleteButton onClick={() => handleDeleteMovie(movie.id)}>
+              <DeleteButton
+                onClick={() => handleDeleteMovie(movie.id)}
+                aria-label={`${movie.title} 보관함에서 지우기`}
+              >
                 지우기
               </DeleteButton>
             </MovieCard>
@@ -87,7 +92,7 @@ const Subtitle = styled.p`
   text-align: center;
 `;
 
-const MovieList = styled.div`
+const MovieList = styled.ul`
   width: 100%;
   max-width: 550px;
   display: flex;
@@ -95,7 +100,7 @@ const MovieList = styled.div`
   gap: 16px;
 `;
 
-const MovieCard = styled.div`
+const MovieCard = styled.li`
   background-color: #1f1f1f;
   padding: 20px;
   border-radius: 6px;
