@@ -24,20 +24,24 @@ export default function MainPage() {
     <MainContainer>
       <Title>FlixDrop 영화 뽑기</Title>
       <form onSubmit={handleSubmit}>
-        <SectionBlock>
-          <p>
+        <SectionBlock as="section">
+          <p id="genre-group-label">
             <b>어떤 장르를 원하시나요?</b>
           </p>
-          {UI_GENRES.map((g) => (
-            <GenreButton
-              key={g.key}
-              type="button"
-              onClick={() => setGenre(g.key)}
-              $isActive={genre === g.key}
-            >
-              {g.name}
-            </GenreButton>
-          ))}
+          <div role="radiogroup" aria-labelledby="genre-group-label">
+            {UI_GENRES.map((g) => (
+              <GenreButton
+                key={g.key}
+                type="button"
+                role="radio"
+                onClick={() => setGenre(g.key)}
+                $isActive={genre === g.key}
+                aria-checked={genre === g.key}
+              >
+                {g.name}
+              </GenreButton>
+            ))}
+          </div>
 
           <p>
             현재 선택된 장르:{" "}
@@ -47,11 +51,15 @@ export default function MainPage() {
           </p>
         </SectionBlock>
 
-        <SectionBlock>
-          <p>
-            <b>선호하는 영화 시대를 골라보세요</b>
-          </p>
-          <StyledSelect value={era} onChange={(e) => setEra(e.target.value)}>
+        <SectionBlock as="section">
+          <StyledLabel htmlFor="era-select">
+            선호하는 영화 시대를 골라보세요
+          </StyledLabel>
+          <StyledSelect
+            id="era-select"
+            value={era}
+            onChange={(e) => setEra(e.target.value)}
+          >
             {UI_ERAS.map((e) => (
               <option key={e.key} value={e.key}>
                 {e.name}
@@ -96,6 +104,12 @@ const SectionBlock = styled.div`
   }
 `;
 
+const StyledLabel = styled.label`
+  display: block;
+  font-weight: bold;
+  margin-bottom: 12px;
+`;
+
 const GenreButton = styled.button<{ $isActive: boolean }>`
   background-color: ${(props) => (props.$isActive ? "#e50914" : "#2f2f2f")};
   color: #ffffff;
@@ -121,7 +135,6 @@ const StyledSelect = styled.select`
   border: 1px solid #3f3f3f;
   border-radius: 4px;
   font-size: 15px;
-  outline: none;
   cursor: pointer;
 `;
 

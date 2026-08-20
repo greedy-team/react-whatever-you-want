@@ -1,14 +1,25 @@
-import { useRouteError, useNavigate } from "react-router-dom";
+import {
+  useRouteError,
+  useNavigate,
+  isRouteErrorResponse,
+} from "react-router-dom";
 import styled from "styled-components";
 
 export default function ErrorPage() {
-  const error = useRouteError() as any;
+  const error = useRouteError();
   const navigate = useNavigate();
 
-  const is404 = error?.status === 404;
+  const isRouteError = isRouteErrorResponse(error);
+  const is404 = isRouteError && error.status === 404;
   const errorMessage = is404
     ? "입력하신 주소가 잘못되었거나 존재하지 않는 페이지입니다."
     : "데이터를 불러오는 중 예기치 못한 문제가 발생했습니다.";
+
+  const errorDetail = isRouteError
+    ? error.statusText
+    : error instanceof Error
+      ? error.message
+      : "Unknown Error";
 
   return (
     <ResultContainer>
@@ -17,22 +28,35 @@ export default function ErrorPage() {
 
         <InfoBlock>
           <HighlightText>
-            {is404 ? "🔍 404 Page Not Found" : "⚠️ Application Error"}
+            {is404 ? (
+              <>
+                <span aria-hidden="true">🔍</span> 404 Page Not Found
+              </>
+            ) : (
+              <>
+                <span aria-hidden="true">⚠️</span> Application Error
+              </>
+            )}
           </HighlightText>
 
-          <InfoText>📅 에러 안내</InfoText>
+          <InfoText>
+            <span aria-hidden="true">📅</span> 에러 안내
+          </InfoText>
           <HighlightText>{errorMessage}</HighlightText>
 
           <MovieTitleSection>
-            <InfoText>🎬 상세 내용</InfoText>
-            <MovieTitle>
-              {error?.statusText || error?.message || "Unknown Error"}
-            </MovieTitle>
+            <InfoText>
+              <span aria-hidden="true">🎬</span> 상세 내용
+            </InfoText>
+            <MovieTitle>{errorDetail}</MovieTitle>
           </MovieTitleSection>
         </InfoBlock>
 
-        <PrimaryButton onClick={() => navigate("/")}>
-          🏠 홈으로 돌아가기
+        <PrimaryButton
+          onClick={() => navigate("/")}
+          aria-label="장르 및 시대 선택 화면인 홈으로 돌아가기"
+        >
+          <span aria-hidden="true">🏠</span> 홈으로 돌아가기
         </PrimaryButton>
       </ResultCard>
     </ResultContainer>
